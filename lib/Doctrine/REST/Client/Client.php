@@ -73,7 +73,7 @@ class Client
         $password = $request->getPassword();
 
         if ($username && $password) {
-            curl_setopt ($ch, CURLOPT_USERPWD, $username . ':' . $password);
+            curl_setopt($ch, CURLOPT_USERPWD, $username . ':' . $password);
         }
 
         switch ($request->getMethod()) {
@@ -92,7 +92,7 @@ class Client
 
         $result = curl_exec($ch);
 
-        if ( ! $result) {
+        if (! $result) {
             $errorNumber = curl_errno($ch);
             $error = curl_error($ch);
             curl_close($ch);

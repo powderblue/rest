@@ -48,7 +48,7 @@ class Manager
 
     public function getEntityConfiguration($entity)
     {
-        if ( ! isset($this->_entityConfigurations[$entity])) {
+        if (! isset($this->_entityConfigurations[$entity])) {
             throw new \InvalidArgumentException(
                 sprintf('Could not find entity configuration for "%s"', $entity)
             );
@@ -96,41 +96,38 @@ class Manager
 
         $result =  $this->_client->execute($request);
 
-        if (is_array($result))
-        {
+        if (is_array($result)) {
             $name = $configuration->getName();
 
             $identifierKey = $configuration->getIdentifierKey();
             $className = $configuration->getClass();
-            if (isset($result[$name]) && is_array($result[$name]))
-            {
+            if (isset($result[$name]) && is_array($result[$name])) {
                 $collection = array();
                 foreach ($result[$name] as $data) {
                     $identifier = $data[$identifierKey];
-                    if (isset($this->_identityMap[$className][$identifier]))
-                    {
+                    if (isset($this->_identityMap[$className][$identifier])) {
                         $instance = $this->_identityMap[$className][$identifier];
                     } else {
                         $instance = $configuration->newInstance();
                         $this->_identityMap[$className][$identifier] = $instance;
                     }
                     $collection[] = $this->_hydrate(
-                        $configuration, $instance, $data
+                        $configuration,
+                        $instance,
+                        $data
                     );
                 }
                 return $collection;
-            } else if ($result) {
+            } elseif ($result) {
                 
-                if (is_object($entity))
-                {
+                if (is_object($entity)) {
                     $instance = $entity;
                     $this->_hydrate($configuration, $instance, $result);
                     $identifier = $this->getEntityIdentifier($instance);
                     $this->_identityMap[$className][$identifier] = $instance;
                 } else {
                     $identifier = $result[$identifierKey];
-                    if (isset($this->_identityMap[$className][$identifier]))
-                    {
+                    if (isset($this->_identityMap[$className][$identifier])) {
                         $instance = $this->_identityMap[$className][$identifier];
                     } else {
                         $instance = $configuration->newInstance();
@@ -140,16 +137,15 @@ class Manager
                 }
                 return $instance;
             }
-        } else {
-            return array();
         }
+
+        return array();
     }
 
     private function _hydrate($configuration, $instance, $data)
     {
         foreach ($data as $key => $value) {
-            if (is_array($value))
-            {
+            if (is_array($value)) {
                 $configuration->setValue($instance, $key, (string) $value);
             } else {
                 $configuration->setValue($instance, $key, $value);

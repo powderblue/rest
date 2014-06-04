@@ -2,33 +2,32 @@
 
 namespace Doctrine\Tests\REST;
 
-use Doctrine\ORM\EntityManager,
-    Doctrine\REST\Client\Manager,
-    Doctrine\REST\Client\Request,
-    Doctrine\REST\Client\Entity,
-    Doctrine\REST\Client\EntityConfiguration,
-    Doctrine\REST\Client\Client,
-    Doctrine\REST\Server\Server;
-
-require_once __DIR__ . '/TestInit.php';
+use Doctrine\ORM\EntityManager;
+use Doctrine\REST\Client\Manager;
+use Doctrine\REST\Client\Request;
+use Doctrine\REST\Client\Entity;
+use Doctrine\REST\Client\EntityConfiguration;
+use Doctrine\REST\Client\Client;
+use Doctrine\REST\Server\Server;
 
 class FunctionalTest extends \PHPUnit_Framework_TestCase
 {
-    private $_manager;
-    private $_client;
+    private $clientManager;
 
-    public function setUpRest($type)
+    private $functiontalTestClient;
+
+    private function setUpRest($type)
     {
+        $connectionOptions = array(
+            'driver' => 'pdo_sqlite',
+            'memory' => true
+        );
+
         $config = new \Doctrine\ORM\Configuration();
         $config->setMetadataCacheImpl(new \Doctrine\Common\Cache\ArrayCache);
         $config->setProxyDir('/tmp');
         $config->setProxyNamespace('Proxies');
         $config->setMetadataDriverImpl($config->newDefaultAnnotationDriver());
-
-        $connectionOptions = array(
-          'driver' => 'pdo_sqlite',
-          'memory' => true
-        );
 
         $em = \Doctrine\ORM\EntityManager::create($connectionOptions, $config);
         $classes = array($em->getMetadataFactory()->getMetadataFor('Doctrine\Tests\REST\DoctrineUser'));
@@ -38,31 +37,24 @@ class FunctionalTest extends \PHPUnit_Framework_TestCase
         $schemaTool->createSchema($classes);
 
         if ($type === 'orm') {
-            $this->_client = new TestFunctionalClient('user', $em);
+            $this->functiontalTestClient = new TestFunctionalClient('user', $em);
         } else {
-            $this->_client = new TestFunctionalClient('user', $em->getConnection());
+            $this->functiontalTestClient = new TestFunctionalClient('user', $em->getConnection());
         }
 
-        $this->_manager = new Manager($this->_client);
-        $this->_manager->registerEntity('Doctrine\Tests\REST\User');
+        $this->clientManager = new Manager($this->functiontalTestClient);
+        $this->clientManager->registerEntity('Doctrine\Tests\REST\User');
 
-        Entity::setManager($this->_manager);
+        Entity::setManager($this->clientManager);
     }
 
-    public function testOrm()
+    /**
+     * @dataProvider doctrineDatabaseLibNames
+     */
+    public function testActiveRecordApi($doctrineDatabaseLibName)
     {
-        $this->setUpRest('orm');
-        $this->_testActiveRecordApi();
-    }
+        $this->setUpRest($doctrineDatabaseLibName);
 
-    public function testDbal()
-    {
-        $this->setUpRest('dbal');
-        $this->_testActiveRecordApi();
-    }
-
-    private function _testActiveRecordApi()
-    {
         $user1 = new User();
         $user1->setUsername('jwage');
         $user1->save();
@@ -98,6 +90,14 @@ class FunctionalTest extends \PHPUnit_Framework_TestCase
         $test = User::findAll();
 
         $this->assertEquals(2, count($test));
+    }
+
+    public static function doctrineDatabaseLibNames()
+    {
+        return array(
+            array('orm'),
+            array('dbal'),
+        );
     }
 }
 
@@ -137,7 +137,7 @@ class TestFunctionalClient extends Client
         if ($method === 'GET' && preg_match_all('/api\/' . $this->name . '\/([0-9]).xml/', $url, $matches)) {
             $id = $matches[1][0];
             return $this->execServer($request, array(
-                '_method' => $method, 
+                '_method' => $method,
                 '_format' => $responseType,
                 '_entity' => $this->name,
                 '_action' => 'get',
@@ -164,7 +164,6 @@ class TestFunctionalClient extends Client
                 '_action' => 'insert'
             ), $parameters, $responseType);
         }
-
 
         // POST api/user/1.xml (update)
         if ($method === 'POST' && preg_match_all('/api\/' . $this->name . '\/([0-9]).xml/', $url, $matches)) {

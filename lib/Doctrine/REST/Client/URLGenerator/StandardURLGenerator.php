@@ -38,17 +38,14 @@ class StandardURLGenerator extends AbstractURLGenerator
         $action = isset($options['action']) ? $options['action'] : null;
         $parameters = isset($options['parameters']) ? $options['parameters'] : array();
 
-        if ($id)
-        {
-            if ($action !== null)
-            {
+        if ($id) {
+            if ($action !== null) {
                 $path = sprintf('/%s/%s.' . $this->_entityConfiguration->getResponseType(), $id, $action);
             } else {
                 $path = sprintf('/%s.' . $this->_entityConfiguration->getResponseType(), $id);
             }
         } else {
-            if ($action !== null)
-            {
+            if ($action !== null) {
                 $path = sprintf('/%s.' . $this->_entityConfiguration->getResponseType(), $action);
             } else {
                 $path = '.' . $this->_entityConfiguration->getResponseType();

@@ -36,7 +36,7 @@ class GetAction extends AbstractAction
     {
         $entity = $this->_findEntityById();
 
-        if ( ! $entity) {
+        if (! $entity) {
             throw new \InvalidArgumentException(sprintf('Could not find the "%s" with an id of "%s"', $this->_request['_entity'], implode(', ', (array) $this->_request['_id'])));
         }
 

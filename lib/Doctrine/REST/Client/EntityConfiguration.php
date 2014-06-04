@@ -21,8 +21,8 @@
 
 namespace Doctrine\REST\Client;
 
-use Doctrine\REST\Client\URLGenerator\StandardURLGenerator,
-    Doctrine\REST\Client\ResponseTransformer\StandardResponseTransformer;
+use Doctrine\REST\Client\URLGenerator\StandardURLGenerator;
+use Doctrine\REST\Client\ResponseTransformer\StandardResponseTransformer;
 
 /**
  * Entity configuration class holds all the configuration information for a PHP5

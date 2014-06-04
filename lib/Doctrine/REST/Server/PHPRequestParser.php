@@ -23,18 +23,18 @@ class PHPRequestParser
         if ($count === 1) {
             if ($method === 'POST' || $method === 'PUT') {
                 $action = 'insert';
-            } else if ($method === 'GET') {
+            } elseif ($method === 'GET') {
                 $action = 'list';
             }
-        } else if ($count === 2) {
+        } elseif ($count === 2) {
             if ($method === 'POST' || $method === 'PUT') {
                 $action = 'update';
-            } else if ($method === 'GET') {
+            } elseif ($method === 'GET') {
                 $action = 'get';
-            } else if ($method === 'DELETE') {
+            } elseif ($method === 'DELETE') {
                 $action = 'delete';
             }
-        } else if ($count === 3) {
+        } elseif ($count === 3) {
             $action = $action;
         }
 

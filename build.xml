@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="doctrine/rest" default="check_quality">
+    <target name="lint">
+        <phpcodesniffer
+            standard="PSR2"
+            format="full"
+            allowedFileExtensions="php"
+            haltonerror="true"
+            showWarnings="false">
+
+            <fileset dir="lib">
+                <include name="**/*.php"/>
+            </fileset>
+
+            <!--fileset dir="tests">
+                <include name="**/*.php"/>
+            </fileset-->
+        </phpcodesniffer>
+    </target>
+
+    <target name="test">
+        <exec dir="tests" command="~/.composer/vendor/bin/phpunit ." passthru="true" checkreturn="true"/>
+    </target>
+
+    <target name="check_quality">
+        <phingcall target="test"/>
+        <phingcall target="lint"/>
+    </target>
+</project>

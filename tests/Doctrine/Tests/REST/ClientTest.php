@@ -2,14 +2,12 @@
 
 namespace Doctrine\Tests\REST;
 
-use Doctrine\REST\Client\Manager,
-    Doctrine\REST\Client\Request,
-    Doctrine\REST\Client\Entity,
-    Doctrine\REST\Client\EntityConfiguration,
-    Doctrine\REST\Client\Client,
-    Entities\ServerTest\User;
-
-require_once __DIR__ . '/TestInit.php';
+use Doctrine\REST\Client\Manager;
+use Doctrine\REST\Client\Request;
+use Doctrine\REST\Client\Entity;
+use Doctrine\REST\Client\EntityConfiguration;
+use Doctrine\REST\Client\Client;
+use Entities\ServerTest\User;
 
 class ClientTest extends \PHPUnit_Framework_TestCase
 {
@@ -151,7 +149,7 @@ class Status extends Entity
         $entityConfiguration->setName('statuses');
         $entityConfiguration->setUsername('username');
         $entityConfiguration->setPassword('password');
-    }    
+    }
 }
 
 class ClientArticleTest extends Entity
@@ -201,12 +199,11 @@ class TestClient extends Client
         $this->last = get_defined_vars();
 
         if ($url === 'http://api.people.com/article.xml') {
-            if ($method === Client::PUT)
-            {
+            if ($method === Client::PUT) {
                 return array('id' => 1, 'title' => 'test');
-            } else if ($method === Client::POST) {
+            } elseif ($method === Client::POST) {
                 return $parameters;
-            } else if ($method === Client::GET) {
+            } elseif ($method === Client::GET) {
                 return array(
                     'article' => array(
                         array(
@@ -221,10 +218,10 @@ class TestClient extends Client
                 );
             }
             return array();
-        } else if ($url === 'http://api.people.com/article/1.xml') {
+        } elseif ($url === 'http://api.people.com/article/1.xml') {
             if ($method === Client::DELETE) {
                 return array('id' => 1, 'title' => 'test');
-            } else if ($method === Client::GET) {
+            } elseif ($method === Client::GET) {
                 return array('id' => 1, 'title' => 'test');
             }
         }

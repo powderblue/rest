@@ -21,8 +21,8 @@
 
 namespace Doctrine\REST\Server;
 
-use Doctrine\ORM\EntityManager,
-    Doctrine\ORM\Connection;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Connection;
 
 /**
  * Simple REST server facade.

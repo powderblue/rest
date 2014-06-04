@@ -85,11 +85,11 @@ class Response
     private function _sendHeaders()
     {
         if ($this->_requestHandler->getUsername()) {
-            if ( ! isset($_SERVER['PHP_AUTH_USER'])) {
+            if (! isset($_SERVER['PHP_AUTH_USER'])) {
                 header('WWW-Authenticate: Basic realm="Doctrine REST API"');
                 header('HTTP/1.0 401 Unauthorized');
             } else {
-                if ( ! $this->_requestHandler->hasValidCredentials()) {
+                if (! $this->_requestHandler->hasValidCredentials()) {
                     $this->setError('Invalid credentials specified.');
                 }
             }
@@ -98,12 +98,12 @@ class Response
         switch ($this->_request['_format']) {
             case 'php':
                 header('Content-type: text/html;');
-            break;
+                break;
 
             case 'json':
                 header('Content-type: text/json;');
                 header('Content-Disposition: attachment; filename="' . $this->_request['_action'] . '.json"');
-            break;
+                break;
 
             case 'xml':
             default:
@@ -117,7 +117,7 @@ class Response
             $xml = new \SimpleXmlElement("<?xml version=\"1.0\" encoding=\"utf-8\"?><$rootNodeName/>");
         }
 
-        foreach($array as $key => $value) {
+        foreach ($array as $key => $value) {
             if (is_numeric($key)) {
                 $key = $rootNodeName . $key;
             }
@@ -126,7 +126,7 @@ class Response
             if (is_array($value) && ! empty($value)) {
                 $node = $xml->addChild($key);
                 $this->_arrayToXml($value, $rootNodeName, $node, $charset);
-            } else if ($value) {
+            } elseif ($value) {
                 $charset = $charset ? $charset : 'utf-8';
                 if (strcasecmp($charset, 'utf-8') !== 0 && strcasecmp($charset, 'utf8') !== 0) {
                     $value = iconv($charset, 'UTF-8', $value);
@@ -158,21 +158,21 @@ class Response
             if (preg_match('/.+<\/\w[^>]*>$/', $token, $matches)) {
                 $indent = 0;
             // 2. closing tag - outdent now
-            } else if (preg_match('/^<\/\w/', $token, $matches)) {
+            } elseif (preg_match('/^<\/\w/', $token, $matches)) {
                 $pad = $pad - 4;
             // 3. opening tag - don't pad this one, only subsequent tags
             } elseif (preg_match('/^<\w[^>]*[^\/]>.*$/', $token, $matches)) {
                 $indent = 4;
             // 4. no indentation needed
             } else {
-                $indent = 0; 
+                $indent = 0;
             }
 
             // pad the line with the required number of leading spaces
             $line = str_pad($token, strlen($token)+$pad, ' ', STR_PAD_LEFT);
             $result .= $line . "\n"; // add to the cumulative result, with linefeed
             $token = strtok("\n"); // get the next token
-            $pad += $indent; // update the pad size for subsequent lines    
+            $pad += $indent; // update the pad size for subsequent lines
         }
         return $result;
     }

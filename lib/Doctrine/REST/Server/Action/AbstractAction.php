@@ -21,8 +21,8 @@
 
 namespace Doctrine\REST\Server\Action;
 
-use Doctrine\REST\Server\RequestHandler,
-    Doctrine\ORM\EntityManager;
+use Doctrine\REST\Server\RequestHandler;
+use Doctrine\ORM\EntityManager;
 
 /**
  * Abstract server action class for REST server actions to extend from.
@@ -66,7 +66,7 @@ abstract class AbstractAction
 
     protected function _setQueryFirstAndMax($q)
     {
-        if ( ! isset($this->_request['_page']) && ! isset($this->_request['_first']) && ! isset($this->_request['_max'])) {
+        if (! isset($this->_request['_page']) && ! isset($this->_request['_first']) && ! isset($this->_request['_max'])) {
             $this->_request['_page'] = '1';
         }
         $maxPerPage = isset($this->_request['_max_per_page']) ? $this->_request['_max_per_page'] : 20;
@@ -107,14 +107,14 @@ abstract class AbstractAction
             $query = $qb->getQuery();
 
             return $query->getSingleResult();
-        } else {
-            $entity = $this->_getEntity();
-            $identifierKey = $this->_getEntityIdentifierKey($entity);
-
-            $query = sprintf('SELECT * FROM %s WHERE %s = ?', $entity, $identifierKey);
-
-            return $this->_source->fetchRow($query, array($this->_request['_id']));
         }
+
+        $entity = $this->_getEntity();
+        $identifierKey = $this->_getEntityIdentifierKey($entity);
+
+        $query = sprintf('SELECT * FROM %s WHERE %s = ?', $entity, $identifierKey);
+        $statement = $this->_source->executeQuery($query, array($this->_request['_id']));
+        return $statement->fetch(\PDO::FETCH_OBJ);
     }
 
     protected function _updateEntityInstance($entity)

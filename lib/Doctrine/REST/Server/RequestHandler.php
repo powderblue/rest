@@ -21,8 +21,8 @@
 
 namespace Doctrine\REST\Server;
 
-use Doctrine\ORM\EntityManager,
-    Doctrine\DBAL\Connection;
+use Doctrine\ORM\EntityManager;
+use Doctrine\DBAL\Connection;
 
 /**
  * Class responsible for transforming a REST server request to a response.
@@ -112,7 +112,7 @@ class RequestHandler
 
     public function checkCredentials($username, $password)
     {
-        if ( ! $this->isSecure()) {
+        if (! $this->isSecure()) {
             return true;
         }
 
@@ -202,14 +202,14 @@ class RequestHandler
     public function getAction($entity, $actionName)
     {
         if (isset($this->_actions[$actionName])) {
-            if ( ! is_object($this->_actions[$actionName])) {
+            if (! is_object($this->_actions[$actionName])) {
                 $actionClassName = $this->_actions[$actionName];
                 $this->_actions[$actionName] = new $actionClassName($this);
             }
             return $this->_actions[$actionName];
         }
         if (isset($this->_entities[$entity]['actions'][$actionName])) {
-            if ( ! is_object($this->_entities[$entity]['actions'][$actionName])) {
+            if (! is_object($this->_entities[$entity]['actions'][$actionName])) {
                 $actionClassName = $this->_entities[$entity]['actions'][$actionName];
                 $this->_entities[$entity]['actions'][$actionName] = new $actionClassName($this);
             }
@@ -230,7 +230,7 @@ class RequestHandler
 
     private function _transformResultForResponse($result, $array = null)
     {
-        if ( ! $array) {
+        if (! $array) {
             $array = array();
         }
         if (is_object($result)) {
@@ -246,7 +246,7 @@ class RequestHandler
                     $array[$key] = $value;
                 }
             }
-        } else if (is_array($result)) {
+        } elseif (is_array($result)) {
             foreach ($result as $key => $value) {
                 if (is_object($value) || is_array($value)) {
                     if (is_object($value)) {
@@ -257,7 +257,7 @@ class RequestHandler
                     $array[$key] = $value;
                 }
             }
-        } else if (is_string($result)) {
+        } elseif (is_string($result)) {
             $array = $result;
         }
         return $array;

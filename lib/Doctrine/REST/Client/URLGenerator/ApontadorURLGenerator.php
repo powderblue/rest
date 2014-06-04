@@ -16,17 +16,14 @@ class ApontadorURLGenerator extends AbstractURLGenerator
         $parameters = isset($options['parameters']) ? $options['parameters'] : array();
 
         $parameters['type'] = $this->_entityConfiguration->getResponseType();
-        if ($id)
-        {
-            if ($action !== null)
-            {
+        if ($id) {
+            if ($action !== null) {
                 $path = sprintf('/%s/%s', $id, $action);
             } else {
                 $path = sprintf('/%s', $id);
             }
         } else {
-            if ($action !== null)
-            {
+            if ($action !== null) {
                 $path = sprintf('/%s', $action);
             } else {
                 $path = '';

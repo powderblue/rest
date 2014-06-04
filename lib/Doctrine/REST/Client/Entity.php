@@ -75,7 +75,8 @@ abstract class Entity
         return self::$_manager->execute(
             get_called_class(),
             self::generateUrl(get_defined_vars()),
-            Client::GET, $parameters
+            Client::GET,
+            $parameters
         );
     }
 
@@ -93,7 +94,9 @@ abstract class Entity
     {
         $id = $this->getIdentifier();
         return self::$_manager->execute(
-            $this, $this->generateUrl(get_defined_vars()), Client::DELETE
+            $this,
+            $this->generateUrl(get_defined_vars()),
+            Client::DELETE
         );
     }
 
@@ -101,24 +104,30 @@ abstract class Entity
     {
         $id = $this->getIdentifier();
         return self::$_manager->execute(
-            $this, $this->generateUrl(get_defined_vars()),
-            Client::POST, $this->toArray()
+            $this,
+            $this->generateUrl(get_defined_vars()),
+            Client::POST,
+            $this->toArray()
         );
     }
 
     public function get($action = null)
     {
         return self::$_manager->execute(
-            $this, $this->generateUrl(get_defined_vars()),
-            Client::GET, $this->toArray()
+            $this,
+            $this->generateUrl(get_defined_vars()),
+            Client::GET,
+            $this->toArray()
         );
     }
 
     public function put($action = null)
     {
         return self::$_manager->execute(
-            $this, $this->generateUrl(get_defined_vars()),
-            Client::PUT, $this->toArray()
+            $this,
+            $this->generateUrl(get_defined_vars()),
+            Client::PUT,
+            $this->toArray()
         );
     }
 
@@ -127,7 +136,8 @@ abstract class Entity
         return self::$_manager->execute(
             get_called_class(),
             self::generateUrl(get_defined_vars()),
-            $method, $parameters
+            $method,
+            $parameters
         );
     }
 }

@@ -1,0 +1,21 @@
+{
+    "name": "doctrine/rest",
+    "description": "The Doctrine 2 REST server and client component is both an easy way to spin up REST services for your Doctrine 2 entities as well as a way to work with REST services via an ActiveRecord style implementation similiar to ActiveResource in Ruby on Rails!",
+    "license": "LGPL",
+    "authors": [{
+            "name": "Jonathan H. Wage",
+            "email": "jonwage@gmail.com"
+    }],
+    "require": {
+        "php": ">=5.3"
+    },
+    "require-dev": {
+        "ext-pdo_sqlite": "*",
+        "doctrine/orm": "v2.4.2"
+    },
+    "autoload": {
+        "psr-4": { 
+            "Doctrine\\REST\\": "lib/Doctrine/REST" 
+        }
+    }
+}

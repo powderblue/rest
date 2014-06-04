@@ -69,7 +69,7 @@ class StandardResponseTransformer extends AbstractResponseTransformer
             }
             $executed = true;
         }
-        if ( ! $executed && ! $children->getName()) {
+        if (! $executed && ! $children->getName()) {
             $array = (string) $object;
         }
         return $array;
