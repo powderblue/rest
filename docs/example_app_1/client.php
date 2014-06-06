@@ -1,16 +1,13 @@
 <?php
 
-use Doctrine\REST\Client\Client;
-use Doctrine\REST\Client\EntityConfiguration;
-use Doctrine\REST\Client\Manager;
-use Doctrine\REST\Client\Entity;
+namespace Doctrine\REST;
 
 require_once __DIR__ . '/../../vendor/autoload.php';
 
 //Point this at `server.php` on your machine
 define('TEST_SERVER_URL', 'http://localhost/rest/server.php');
 
-class User extends Entity
+class User extends Client\Entity
 {
     public $id;
 
@@ -18,7 +15,7 @@ class User extends Entity
 
     public $password;
 
-    public static function configure(EntityConfiguration $entityConfiguration)
+    public static function configure(Client\EntityConfiguration $entityConfiguration)
     {
         $entityConfiguration->setUrl(TEST_SERVER_URL);
         $entityConfiguration->setName('user');
@@ -27,22 +24,18 @@ class User extends Entity
 
 //Register an entity for working with a remote data repository:
 
-$client = new Client();
+$manager = Client\Manager::create();
+$manager->registerEntity(__NAMESPACE__ . '\User');
 
-$manager = new Manager($client);
-$manager->registerEntity('User');
-
-Entity::setManager($manager);
+Client\Entity::setManager($manager);
 
 //Mutate the contents of the remote data repository using the entity class:
 
 print '<pre>';
 
 $user = User::find(2);
-
 print_r($user);
 
 $user->password = 'newpassword';
 $user->save();
-
 print_r($user);

@@ -33,11 +33,64 @@ namespace Doctrine\REST\Client;
  */
 abstract class Entity
 {
-    protected static $_manager;
+    /**
+     * @var array
+     */
+    private static $managers = array();
 
+    /**
+     * Sets the manager for the called class.
+     * 
+     * @param \Doctrine\REST\Client\Manager $manager
+     * @return void
+     */
     public static function setManager(Manager $manager)
     {
-        self::$_manager = $manager;
+        self::$managers[get_called_class()] = $manager;
+    }
+
+    /**
+     * Returns TRUE if the called class has a manager, or FALSE otherwise.
+     * 
+     * @return bool
+     */
+    public static function hasManager()
+    {
+        return array_key_exists(get_called_class(), self::$managers);
+    }
+
+    /**
+     * Removes the manager for the called class.
+     * 
+     * @return void
+     */
+    public static function removeManager()
+    {
+        unset(self::$managers[get_called_class()]);
+    }
+
+    /**
+     * Returns the manager for the called `Entity` subclass, or the manager for `Entity`, if it has one.
+     * 
+     * @return Doctrine\REST\Client\Entity
+     * @throws \RuntimeException If the called class does not have its own entity manager and there is no default
+     * @todo Remove the fallback?
+     */
+    public static function getManager()
+    {
+        $calledClassName = get_called_class();
+
+        if (!static::hasManager()) {
+            $thisClassName = __CLASS__;
+
+            if (!array_key_exists($thisClassName, self::$managers)) {
+                throw new \RuntimeException("{$calledClassName} does not have its own entity manager and there is no default");
+            }
+
+            return self::$managers[$thisClassName];
+        }
+
+        return self::$managers[$calledClassName];
     }
 
     public function toArray()
@@ -47,23 +100,23 @@ abstract class Entity
 
     public function exists()
     {
-        return self::$_manager->entityExists($this);
+        return static::getManager()->entityExists($this);
     }
 
     public function getIdentifier()
     {
-        return self::$_manager->getEntityIdentifier($this);
+        return static::getManager()->getEntityIdentifier($this);
     }
 
     public static function generateUrl(array $options = array())
     {
-        $configuration = self::$_manager->getEntityConfiguration(get_called_class());
+        $configuration = static::getManager()->getEntityConfiguration(get_called_class());
         return $configuration->generateUrl($options);
     }
 
     public static function find($id, $action = null)
     {
-        return self::$_manager->execute(
+        return static::getManager()->execute(
             get_called_class(),
             self::generateUrl(get_defined_vars()),
             Client::GET
@@ -72,7 +125,7 @@ abstract class Entity
 
     public static function findAll($action = null, $parameters = null)
     {
-        return self::$_manager->execute(
+        return static::getManager()->execute(
             get_called_class(),
             self::generateUrl(get_defined_vars()),
             Client::GET,
@@ -87,13 +140,13 @@ abstract class Entity
         $method = $exists ? Client::POST : Client::PUT;
         $id = $exists ? $this->getIdentifier() : null;
         $path = $this->generateUrl(get_defined_vars());
-        return self::$_manager->execute($this, $path, $method, $parameters, $action);
+        return static::getManager()->execute($this, $path, $method, $parameters, $action);
     }
 
     public function delete($action = null)
     {
         $id = $this->getIdentifier();
-        return self::$_manager->execute(
+        return static::getManager()->execute(
             $this,
             $this->generateUrl(get_defined_vars()),
             Client::DELETE
@@ -103,7 +156,7 @@ abstract class Entity
     public function post($action = null)
     {
         $id = $this->getIdentifier();
-        return self::$_manager->execute(
+        return static::getManager()->execute(
             $this,
             $this->generateUrl(get_defined_vars()),
             Client::POST,
@@ -113,7 +166,7 @@ abstract class Entity
 
     public function get($action = null)
     {
-        return self::$_manager->execute(
+        return static::getManager()->execute(
             $this,
             $this->generateUrl(get_defined_vars()),
             Client::GET,
@@ -123,7 +176,7 @@ abstract class Entity
 
     public function put($action = null)
     {
-        return self::$_manager->execute(
+        return static::getManager()->execute(
             $this,
             $this->generateUrl(get_defined_vars()),
             Client::PUT,
@@ -133,7 +186,7 @@ abstract class Entity
 
     public static function execute($method, $action, $parameters = null)
     {
-        return self::$_manager->execute(
+        return static::getManager()->execute(
             get_called_class(),
             self::generateUrl(get_defined_vars()),
             $method,

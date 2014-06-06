@@ -1,23 +1,22 @@
 <?php
 
-namespace Doctrine\Tests\REST;
+namespace Doctrine\Tests\REST\Client\Client;
 
 use Doctrine\REST\Client\Manager;
 use Doctrine\REST\Client\Request;
 use Doctrine\REST\Client\Entity;
 use Doctrine\REST\Client\EntityConfiguration;
 use Doctrine\REST\Client\Client;
-use Entities\ServerTest\User;
 
-class ClientTest extends \PHPUnit_Framework_TestCase
+class TestCase extends \PHPUnit_Framework_TestCase
 {
     public function setUp()
     {
         $this->client = new TestClient();
 
         $manager = new Manager($this->client);
-        $manager->registerEntity('Doctrine\Tests\REST\ClientArticleTest');
-        $manager->registerEntity('Doctrine\Tests\REST\Status');
+        $manager->registerEntity(__NAMESPACE__ . '\ClientArticleTest');
+        $manager->registerEntity(__NAMESPACE__ . '\Status');
 
         Entity::setManager($manager);
     }

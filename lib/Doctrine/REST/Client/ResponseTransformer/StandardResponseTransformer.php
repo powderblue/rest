@@ -40,39 +40,57 @@ class StandardResponseTransformer extends AbstractResponseTransformer
                 return $this->xmlToArray($data);
             case 'json':
                 return $this->jsonToArray($data);
-            break;
         }
     }
 
-    public function xmlToArray($object, &$array = array())
+    public function xmlToArray($rootElement)
     {
-        if (is_string($object)) {
-            $object = new \SimpleXMLElement($object);
+        if (is_string($rootElement)) {
+            $rootElement = new \SimpleXMLElement($rootElement);
         }
-        $children = $object->children();
-        $executed = false;
-        foreach ($children as $elementName => $node) {
-            if (isset($array[$elementName]) && $array[$elementName] !== null) {
-                if (isset($array[$elementName][0]) && $array[$elementName][0] !== null) {
-                    $i = count($array[$elementName]);
-                    $this->xmlToArray($node, $array[$elementName][$i]);
-                } else {
-                    $tmp = $array[$elementName];
-                    $array[$elementName] = array();
-                    $array[$elementName][0] = $tmp;
-                    $i = count($array[$elementName]);
-                    $this->xmlToArray($node, $array[$elementName][$i]);
-                }
-            } else {
-                $array[$elementName] = array();
-                $this->xmlToArray($node, $array[$elementName]);
+
+        $childElements = $rootElement->children();
+
+        if (!$childElements->count()) {
+            return array();  //@todo Change this?
+        }
+
+        //Does the first child have children (are we looking at a collection)?
+        if ($childElements[0]->children()->count()) {
+            $collection = array();
+
+            foreach ($childElements as $childElement) {
+                $record = array();
+                $this->attachElementValueToArray($childElement, $record);
+                $collection[] = $record;
             }
-            $executed = true;
+
+            return array($this->_entityConfiguration->getName() => $collection);
         }
-        if (! $executed && ! $children->getName()) {
-            $array = (string) $object;
+
+        //A single record was returned
+        $record = array();
+        $this->attachElementValueToArray($rootElement, $record);
+        return $record;
+    }
+
+    /**
+     * @param \SimpleXMLElement $element
+     * @param array &$array The array to attach the value or child values to 
+     */
+    private function attachElementValueToArray(\SimpleXMLElement $element, array &$array)
+    {
+        $childElements = $element->children();
+
+        if ($childElements->count()) {
+            foreach ($childElements as $childElementName => $childElement) {
+                $value = array();
+                $this->attachElementValueToArray($childElement, $value);
+                $array[$childElementName] = $value;
+            }
+        } else {
+            $array = (string) $element;
         }
-        return $array;
     }
 
     public function jsonToArray($json)

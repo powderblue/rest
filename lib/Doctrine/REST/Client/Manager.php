@@ -32,35 +32,77 @@ namespace Doctrine\REST\Client;
  */
 class Manager
 {
+    /**
+     * @var Doctrine\REST\Client\Client
+     */
     private $_client;
+
+    /**
+     * @var array
+     */
     private $_entityConfigurations = array();
+
+    /**
+     * @var array
+     */
     private $_identityMap = array();
 
+    /**
+     * @var array
+     */
+    private $defaultEntityConfigurationAttributes = array();
+
     public function __construct(Client $client)
+    {
+        $this->setClient($client);
+    }
+
+    /**
+     * @param \Doctrine\REST\Client\Client $client
+     * @return void
+     */
+    private function setClient(Client $client)
     {
         $this->_client = $client;
     }
 
-    public function registerEntity($entity)
+    /**
+     * @return \Doctrine\REST\Client\Client
+     */
+    public function getClient()
     {
-        $this->_entityConfigurations[$entity] = $entity;
+        return $this->_client;
+    }
+
+    /**
+     * Registers the entity class with the specified name.
+     * 
+     * @param string $entityClassName
+     * @return void
+     */
+    public function registerEntity($entityClassName)
+    {
+        $configurationAttributeValues = array_merge($this->getDefaultEntityConfigurationAttributes(), array(
+            'class' => $entityClassName,
+        ));
+
+        $entityConfiguration = new EntityConfiguration($configurationAttributeValues);
+
+        if (method_exists($entityClassName, 'configure')) {
+            call_user_func(array($entityClassName, 'configure'), $entityConfiguration);
+        }
+
+        $this->_entityConfigurations[$entityClassName] = $entityConfiguration;
+
+        $entityClassName::setManager($this);
     }
 
     public function getEntityConfiguration($entity)
     {
         if (! isset($this->_entityConfigurations[$entity])) {
-            throw new \InvalidArgumentException(
-                sprintf('Could not find entity configuration for "%s"', $entity)
-            );
+            throw new \InvalidArgumentException("Could not find entity configuration for \"{$entity}\"");
         }
-        if (is_string($this->_entityConfigurations[$entity])) {
-            $entityConfiguration = new EntityConfiguration($entity);
-            call_user_func_array(
-                array($entity, 'configure'),
-                array($entityConfiguration)
-            );
-            $this->_entityConfigurations[$entity] = $entityConfiguration;
-        }
+
         return $this->_entityConfigurations[$entity];
     }
 
@@ -94,13 +136,14 @@ class Manager
         $request->setResponseType($configuration->getResponseType());
         $request->setResponseTransformerImpl($configuration->getResponseTransformerImpl());
 
-        $result =  $this->_client->execute($request);
+        $result =  $this->getClient()->execute($request);
 
         if (is_array($result)) {
             $name = $configuration->getName();
 
             $identifierKey = $configuration->getIdentifierKey();
             $className = $configuration->getClass();
+
             if (isset($result[$name]) && is_array($result[$name])) {
                 $collection = array();
                 foreach ($result[$name] as $data) {
@@ -119,7 +162,6 @@ class Manager
                 }
                 return $collection;
             } elseif ($result) {
-                
                 if (is_object($entity)) {
                     $instance = $entity;
                     $this->_hydrate($configuration, $instance, $result);
@@ -153,5 +195,36 @@ class Manager
         }
 
         return $instance;
+    }
+
+    /**
+     * Sets the attributes that will be applied to all new entity configurations created by this manager.
+     * 
+     * @param array $attributes
+     * @return void
+     */
+    public function setDefaultEntityConfigurationAttributes(array $attributes)
+    {
+        $this->defaultEntityConfigurationAttributes = $attributes;
+    }
+
+    /**
+     * Returns the attributes that will be applied to all new entity configurations created by this manager.
+     * 
+     * @return array
+     */
+    public function getDefaultEntityConfigurationAttributes()
+    {
+        return $this->defaultEntityConfigurationAttributes;
+    }
+
+    /**
+     * Factory method, returns a fully configured instance.
+     * 
+     * @return Doctrine\REST\Client\Manager
+     */
+    public static function create()
+    {
+        return new self(new Client());
     }
 }

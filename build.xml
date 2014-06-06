@@ -8,6 +8,10 @@
             haltonerror="true"
             showWarnings="false">
 
+            <fileset dir="docs">
+                <include name="**/*.php"/>
+            </fileset>
+
             <fileset dir="lib">
                 <include name="**/*.php"/>
             </fileset>

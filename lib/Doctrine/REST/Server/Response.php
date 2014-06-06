@@ -70,11 +70,9 @@ class Response
         switch ($this->_request['_format']) {
             case 'php':
                 return serialize($data);
-            break;
 
             case 'json':
                 return json_encode($data);
-            break;
 
             case 'xml':
             default:

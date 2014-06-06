@@ -1,7 +1,8 @@
 <?php
 
+namespace Doctrine\REST;
+
 use Doctrine\ORM as ORM;
-use Doctrine\REST\Server as RESTServer;
 
 require_once __DIR__ . '/../../vendor/autoload.php';
 
@@ -39,18 +40,12 @@ $conn->exec("CREATE TABLE user (id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, u
 $conn->exec("INSERT INTO user (username, password) VALUES ('joebloggs', 'foo')");
 $conn->exec("INSERT INTO user (username, password) VALUES ('fredbloggs', 'bar')");
 
-////Test request:
-//
-//$_SERVER['REQUEST_METHOD'] = 'GET';
-////$_SERVER['PATH_INFO'] = '/user/1/test';
-//$_SERVER['PATH_INFO'] = '/user/1';
-
 //Handle the request:
 
-$parser = new RESTServer\PHPRequestParser();
+$parser = new Server\PHPRequestParser();
 $requestData = $parser->getRequestArray();
 
-$server = new RESTServer\Server($em->getConnection(), $requestData);
+$server = new Server\Server($em->getConnection(), $requestData);
 $server->addEntityAction('user', 'test', 'TestAction');
 $server->execute();
 $server->getResponse()->send();
