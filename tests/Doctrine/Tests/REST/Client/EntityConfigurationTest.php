@@ -9,7 +9,7 @@ use Doctrine\REST\Client\ResponseTransformer\StandardResponseTransformer;
 
 class TestCase extends \PHPUnit_Framework_TestCase
 {
-    public function testGeturlReturnsTheValueOfTheUrlAttributeSetUsingSetUrl()
+    public function testGeturlReturnsTheValueOfTheUrlAttributeSetUsingSeturl()
     {
         $configuration = new EntityConfiguration(__NAMESPACE__ . '\Entity01');
         $configuration->setUrl('http://localhost/');
@@ -50,6 +50,7 @@ class TestCase extends \PHPUnit_Framework_TestCase
             'responseType' => 'xml',
             'urlGeneratorImpl' => new StandardURLGenerator($configuration),
             'responseTransformerImpl' => new StandardResponseTransformer($configuration),
+            'cacheTtl' => null,
         ), $configuration->getAttributeValues());
     }
 
@@ -164,9 +165,43 @@ class TestCase extends \PHPUnit_Framework_TestCase
             ),
         );
     }
+
+    public function testGetcachettlReturnsTheCacheTtlSetUsingSetcachettl()
+    {
+        $configuration = new EntityConfiguration(__NAMESPACE__ . '\Entity01');
+        $configuration->setCacheTtl(60);
+        $this->assertEquals(60, $configuration->getCacheTtl());
+    }
+
+    public function testSetcachettlThrowsAnExceptionIfTheTtlIsInvalid()
+    {
+        $configuration = new EntityConfiguration(__NAMESPACE__ . '\Entity01');
+
+        try {
+            $configuration->setCacheTtl(-1);
+        } catch (\InvalidArgumentException $ex) {
+            return $this->assertEquals('The TTL is not greater than or equal to zero', $ex->getMessage());
+        }
+
+        $this->fail();
+    }
+
+    public function testNewinstanceReturnsANewInstanceOfTheEntityClassAssociatedWithTheConfiguration()
+    {
+        $entityClassName = __NAMESPACE__ . '\Entity02';
+        $configuration = new EntityConfiguration($entityClassName);
+        $this->assertInstanceOf($entityClassName, $configuration->newInstance());
+    }
 }
 
 class Entity01 extends Entity
+{
+    private $foo;
+
+    private $bar;
+}
+
+class Entity02 extends Entity
 {
     private $foo;
 

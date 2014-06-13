@@ -133,14 +133,14 @@ abstract class Entity
         );
     }
 
-    public function save($action = null)
+    public function save()
     {
         $parameters = $this->toArray();
         $exists = $this->exists();
         $method = $exists ? Client::POST : Client::PUT;
         $id = $exists ? $this->getIdentifier() : null;
         $path = $this->generateUrl(get_defined_vars());
-        return static::getManager()->execute($this, $path, $method, $parameters, $action);
+        return static::getManager()->execute($this, $path, $method, $parameters);
     }
 
     public function delete($action = null)

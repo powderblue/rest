@@ -38,11 +38,11 @@ use Doctrine\Common\Inflector\Inflector;
  */
 class EntityConfiguration
 {
-    /**
-     * @var Doctrine\REST\Client\EntityConfiguration
-     */
-    private $_prototype;
-
+//    /**
+//     * @var Doctrine\REST\Client\EntityConfiguration
+//     */
+//    private $_prototype;
+//
     /**
      * @var ReflectionClass
      */
@@ -66,6 +66,7 @@ class EntityConfiguration
         'responseType' => null,
         'urlGeneratorImpl' => null,
         'responseTransformerImpl' => null,
+        'cacheTtl' => null,
     );
 
     /**
@@ -282,16 +283,37 @@ class EntityConfiguration
         return $this->getAttributeValue('urlGeneratorImpl');
     }
 
+    /**
+     * @param int $ttl
+     * @return void
+     * @throws \InvalidArgumentException If the TTL is not greater than or equal to zero
+     */
+    public function setCacheTtl($ttl)
+    {
+        if (!(is_numeric($ttl) && $ttl >= 0)) {
+            throw new \InvalidArgumentException('The TTL is not greater than or equal to zero');
+        }
+
+        $this->setAttributeValue('cacheTtl', $ttl);
+    }
+
+    /**
+     * Returns a new instance of the entity class this configuration is associated with.
+     * 
+     * @return \Doctrine\REST\Client\Entity
+     */
     public function newInstance()
     {
-        if ($this->_prototype === null) {
-            $this->_prototype = unserialize(sprintf(
-                'O:%d:"%s":0:{}',
-                strlen($this->_attributes['class']),
-                $this->_attributes['class']
-            ));
-        }
-        return clone $this->_prototype;
+//        if ($this->_prototype === null) {
+//            $this->_prototype = unserialize(sprintf(
+//                'O:%d:"%s":0:{}',
+//                strlen($this->_attributes['class']),
+//                $this->_attributes['class']
+//            ));
+//        }
+//        return clone $this->_prototype;
+        $entityClassName = $this->getClass();
+        return new $entityClassName();
     }
 
     /**

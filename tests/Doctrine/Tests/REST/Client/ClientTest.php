@@ -7,14 +7,18 @@ use Doctrine\REST\Client\Request;
 use Doctrine\REST\Client\Entity;
 use Doctrine\REST\Client\EntityConfiguration;
 use Doctrine\REST\Client\Client;
+use Doctrine\REST\Client\ResponseCache;
 
 class TestCase extends \PHPUnit_Framework_TestCase
 {
+    private $client;
+
     public function setUp()
     {
         $this->client = new TestClient();
+        $responseCache = new ResponseCache(sys_get_temp_dir());
 
-        $manager = new Manager($this->client);
+        $manager = new Manager($this->client, $responseCache);
         $manager->registerEntity(__NAMESPACE__ . '\ClientArticleTest');
         $manager->registerEntity(__NAMESPACE__ . '\Status');
 

@@ -24,7 +24,7 @@ class User extends Client\Entity
 
 //Register an entity for working with a remote data repository:
 
-$manager = Client\Manager::create();
+$manager = new Client\Manager(new Client\Client(), new Client\ResponseCache(sys_get_temp_dir()));
 $manager->registerEntity(__NAMESPACE__ . '\User');
 
 Client\Entity::setManager($manager);

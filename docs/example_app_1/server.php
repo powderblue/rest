@@ -31,9 +31,9 @@ function createEntityManager()
     ), createORMConfiguration());
 }
 
-//Insert some records:
-
 $em = createEntityManager();
+
+//Insert some records:
 
 $conn = $em->getConnection();
 $conn->exec("CREATE TABLE user (id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, username VARCHAR(255) NOT NULL, password VARCHAR(255) NOT NULL)");

@@ -8,6 +8,7 @@ use Doctrine\REST\Client\Request;
 use Doctrine\REST\Client\Entity;
 use Doctrine\REST\Client\Client;
 use Doctrine\REST\Server\Server;
+use Doctrine\REST\Client\ResponseCache;
 
 class TestCase extends \PHPUnit_Framework_TestCase
 {
@@ -45,7 +46,8 @@ class TestCase extends \PHPUnit_Framework_TestCase
     private function createClientManager($entityResourceName, EntityManager $em)
     {
         $functiontalTestClient = new TestFunctionalClient($entityResourceName, $em);
-        $clientManager = new Manager($functiontalTestClient);
+        $responseCache = new ResponseCache(sys_get_temp_dir());
+        $clientManager = new Manager($functiontalTestClient, $responseCache);
         return $clientManager;
     }
 

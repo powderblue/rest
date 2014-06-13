@@ -15,10 +15,20 @@
             <fileset dir="lib">
                 <include name="**/*.php"/>
             </fileset>
+        </phpcodesniffer>
+    </target>
 
-            <!--fileset dir="tests">
+	<target name="lint_tests">
+        <phpcodesniffer
+            standard="PSR2"
+            format="full"
+            allowedFileExtensions="php"
+            haltonerror="true"
+            showWarnings="false">
+
+            <fileset dir="tests">
                 <include name="**/*.php"/>
-            </fileset-->
+            </fileset>
         </phpcodesniffer>
     </target>
 

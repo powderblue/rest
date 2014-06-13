@@ -9,6 +9,7 @@ use Doctrine\REST\Client\Entity;
 use Doctrine\REST\Client\EntityConfiguration;
 use Doctrine\REST\Client\Client;
 use Doctrine\REST\Server\Server;
+use Doctrine\REST\Client\ResponseCache;
 
 class TestCase extends \PHPUnit_Framework_TestCase
 {
@@ -42,7 +43,7 @@ class TestCase extends \PHPUnit_Framework_TestCase
             $this->functiontalTestClient = new TestFunctionalClient('user', $em->getConnection());
         }
 
-        $this->clientManager = new Manager($this->functiontalTestClient);
+        $this->clientManager = new Manager($this->functiontalTestClient, new ResponseCache(sys_get_temp_dir()));
         $this->clientManager->registerEntity(__NAMESPACE__ . '\User');
 
         Entity::setManager($this->clientManager);

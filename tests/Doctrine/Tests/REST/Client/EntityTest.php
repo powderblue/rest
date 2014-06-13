@@ -4,6 +4,8 @@ namespace Doctrine\Tests\REST\Client\Entity;
 
 use Doctrine\REST\Client\Manager;
 use Doctrine\REST\Client\Entity;
+use Doctrine\REST\Client\ResponseCache;
+use Doctrine\REST\Client\Client;
 
 class TestCase extends \PHPUnit_Framework_TestCase
 {
@@ -14,8 +16,7 @@ class TestCase extends \PHPUnit_Framework_TestCase
      */
     private function createManager()
     {
-        $manager = Manager::create();
-        return $manager;
+        return new Manager(new Client(), new ResponseCache(sys_get_temp_dir()));
     }
 
     protected function setUp()
@@ -48,7 +49,7 @@ class TestCase extends \PHPUnit_Framework_TestCase
         $this->fail();
     }
 
-    public function testGetmanagerReturnsTheManagerForEntityInTheAbsenceOfAManagerForTheCalledClass()
+    public function testGetmanagerReturnsTheManagerForTheEntityParentClassInTheAbsenceOfAManagerForTheCalledClass()
     {
         $defaultManager = $this->createManager();
         Entity::setManager($defaultManager);

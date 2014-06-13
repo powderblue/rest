@@ -23,14 +23,14 @@ function createEntityManager()
     ), createORMConfiguration());
 }
 
-//Insert some records:
-
 $em = createEntityManager();
 
+//Insert some records:
+
 $conn = $em->getConnection();
-$conn->exec("CREATE TABLE user (id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, username VARCHAR(255) NOT NULL, password VARCHAR(255) NOT NULL)");
-$conn->exec("INSERT INTO user (username, password) VALUES ('joebloggs', 'foo')");
-$conn->exec("INSERT INTO user (username, password) VALUES ('fredbloggs', 'bar')");
+$conn->exec("CREATE TABLE users (id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, username VARCHAR(255) NOT NULL, password VARCHAR(255) NOT NULL)");
+$conn->exec("INSERT INTO users (username, password) VALUES ('joebloggs', 'foo')");
+$conn->exec("INSERT INTO users (username, password) VALUES ('fredbloggs', 'bar')");
 
 //Handle the request:
 
@@ -38,6 +38,5 @@ $parser = new Server\PHPRequestParser();
 $requestData = $parser->getRequestArray();
 
 $server = new Server\Server($em->getConnection(), $requestData);
-$server->setEntityAlias('user', 'users');
 $server->execute();
 $server->getResponse()->send();
