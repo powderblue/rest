@@ -21,6 +21,8 @@
 
 namespace Doctrine\REST\Client;
 
+use Doctrine\REST\Exception\HttpException;
+
 /**
  * Basic class for issuing HTTP requests via PHP curl.
  *
@@ -32,10 +34,16 @@ namespace Doctrine\REST\Client;
  */
 class Client
 {
+    /**#@+
+     * HTTP method
+     * 
+     * @var string
+     */
     const POST   = 'POST';
     const GET    = 'GET';
     const PUT    = 'PUT';
     const DELETE = 'DELETE';
+    /**#@-*/
 
     public function post(Request $request)
     {
@@ -61,46 +69,57 @@ class Client
         return $this->execute($request);
     }
 
-    public function execute(Request $request)
+    private function createCurl(Request $request)
     {
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $request->getUrl());
-        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Expect:'));
+        $options = array(
+            CURLOPT_URL => $request->getUrl(),
+            CURLOPT_FOLLOWLOCATION => 1,
+            CURLOPT_RETURNTRANSFER => 1,
+            CURLOPT_HTTPHEADER => array('Expect:'),
+        );
 
         $username = $request->getUsername();
         $password = $request->getPassword();
 
         if ($username && $password) {
-            curl_setopt($ch, CURLOPT_USERPWD, $username . ':' . $password);
+            $options[CURLOPT_USERPWD] = "{$username}:{$password}";
         }
 
         switch ($request->getMethod()) {
             case self::POST:
             case self::PUT:
-                curl_setopt($ch, CURLOPT_POST, 1);
-                curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($request->getParameters()));
+                $options[CURLOPT_POST] = 1;
+                $options[CURLOPT_POSTFIELDS] = http_build_query($request->getParameters());
                 break;
             case self::DELETE:
-                curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'DELETE');
-                break;
-            case self::GET:
-            default:
+                $options[CURLOPT_CUSTOMREQUEST] = 'DELETE';
                 break;
         }
 
-        $result = curl_exec($ch);
+        $curl = curl_init();
+        curl_setopt_array($curl, $options);
 
-        if (! $result) {
-            $errorNumber = curl_errno($ch);
-            $error = curl_error($ch);
-            curl_close($ch);
+        return $curl;
+    }
 
-            throw new \Exception($errorNumber . ': ' . $error);
+    public function execute(Request $request)
+    {
+        $curl = $this->createCurl($request);
+        $result = curl_exec($curl);
+
+        if ($result === false) {
+            curl_close($curl);
+            throw new \Exception(curl_errno($curl) . ': ' . curl_error($curl));
         }
 
-        curl_close($ch);
+        $httpStatusCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+
+        if (in_array(substr($httpStatusCode, 0, 1), array(4, 5))) {
+            curl_close($curl);
+            throw new HttpException('The HTTP request was unsuccessful', $httpStatusCode);
+        }
+
+        curl_close($curl);
 
         return $request->getResponseTransformerImpl()->transform($result);
     }

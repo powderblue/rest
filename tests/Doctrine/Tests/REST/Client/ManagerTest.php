@@ -10,6 +10,7 @@ use Doctrine\REST\Client\URLGenerator\StandardURLGenerator;
 use Doctrine\REST\Client\ResponseTransformer\StandardResponseTransformer;
 use Doctrine\REST\Client\ResponseCache;
 use Doctrine\REST\Client\Request;
+use Doctrine\REST\Exception\HttpException;
 
 class TestCase extends \PHPUnit_Framework_TestCase
 {
@@ -194,6 +195,24 @@ class TestCase extends \PHPUnit_Framework_TestCase
             array(Client::DELETE),
         );
     }
+
+    public function testExecuteThrowsAnHttpexceptionIfAnHttpErrorOccurred()
+    {
+        $entityClassName = __NAMESPACE__ . '\Entity06';
+
+        $manager = $this->createManager();
+        $manager->registerEntity($entityClassName);
+
+        try {
+            $manager->execute($entityClassName, 'http://example.com/entity06s/1', Client::GET);
+        } catch (HttpException $ex) {
+            $this->assertSame(404, $ex->getCode());
+            $this->assertSame('The HTTP request was unsuccessful', $ex->getMessage());
+            return;
+        }
+
+        $this->fail();
+    }
 }
 
 class Entity01 extends Entity
@@ -243,6 +262,11 @@ class Entity05 extends Entity
     {
         $entityConfiguration->setCacheTtl(60);
     }
+}
+
+class Entity06 extends Entity
+{
+    protected $id;
 }
 
 class Client01 extends Client
