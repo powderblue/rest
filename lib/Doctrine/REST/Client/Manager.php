@@ -232,8 +232,7 @@ class Manager
 
         //Hydrate the instance
         foreach ($fieldValues as $fieldName => $fieldValue) {
-            $finalFieldValue = is_array($fieldValue) ? (string) $fieldValue : $fieldValue;
-            $entityConfiguration->setValue($instance, $fieldName, $finalFieldValue);
+            $entityConfiguration->setValue($instance, $fieldName, $fieldValue);
         }
 
         //Add the instance to, or refresh the existing instance in, the identity map

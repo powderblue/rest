@@ -213,6 +213,21 @@ class TestCase extends \PHPUnit_Framework_TestCase
 
         $this->fail();
     }
+
+    public function testArrayFieldValuesInResponsesAreNotConvertedToStrings()
+    {
+        $entityClassName = __NAMESPACE__ . '\Entity07';
+
+        $manager = new Manager(new Client02(), $this->createResponseCache());
+        $manager->registerEntity($entityClassName);
+
+        $entityInstance = $manager->execute($entityClassName, 'http://localhost/users/1', Client::GET);
+
+        $this->assertEquals(array(
+            'home' => '01234 567890',
+            'mobile' => '07123 456789',
+        ), $entityInstance->telephone_numbers);
+    }
 }
 
 class Entity01 extends Entity
@@ -269,6 +284,13 @@ class Entity06 extends Entity
     protected $id;
 }
 
+class Entity07 extends Entity
+{
+    public $id;
+
+    public $telephone_numbers = array();
+}
+
 class Client01 extends Client
 {
     public function execute(Request $request)
@@ -277,6 +299,20 @@ class Client01 extends Client
             'id' => '1',
             'username' => 'live',
             'password' => 'live',
+        );
+    }
+}
+
+class Client02 extends Client
+{
+    public function execute(Request $request)
+    {
+        return array(
+            'id' => '1',
+            'telephone_numbers' => array(
+                'home' => '01234 567890',
+                'mobile' => '07123 456789',
+            ),
         );
     }
 }
