@@ -108,8 +108,9 @@ class Client
         $result = curl_exec($curl);
 
         if ($result === false) {
+            $errorMessage = curl_errno($curl) . ': ' . curl_error($curl);
             curl_close($curl);
-            throw new \Exception(curl_errno($curl) . ': ' . curl_error($curl));
+            throw new \Exception($errorMessage);
         }
 
         $httpStatusCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
