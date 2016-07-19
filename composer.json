@@ -12,7 +12,8 @@
     },
     "require-dev": {
         "ext-pdo_sqlite": "*",
-        "doctrine/orm": "v2.4.2"
+        "doctrine/orm": "v2.4.2",
+        "phpunit/phpunit": "^5.4"
     },
     "autoload": {
         "psr-4": { 
