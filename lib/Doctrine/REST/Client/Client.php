@@ -76,6 +76,8 @@ class Client
             CURLOPT_FOLLOWLOCATION => 1,
             CURLOPT_RETURNTRANSFER => 1,
             CURLOPT_HTTPHEADER => array('Expect:'),
+            CURLOPT_SSL_VERIFYHOST => 0,
+            CURLOPT_SSL_VERIFYPEER => 0,
         );
 
         $username = $request->getUsername();
