@@ -43,16 +43,7 @@ class TestCase extends \PHPUnit_Framework_TestCase
         return $request;
     }
 
-    /**
-     * @dataProvider trimmedDirPaths
-     */
-    public function testIsInstantiatedUsingThePathOfADirectory($expectedDir, $actualDir)
-    {
-        $responseCache = new ResponseCache($actualDir);
-        $this->assertSame($expectedDir, $responseCache->getDir());
-    }
-
-    public static function trimmedDirPaths()
+    public static function providesTrimmedDirPaths()
     {
         return array(
             array(
@@ -64,6 +55,16 @@ class TestCase extends \PHPUnit_Framework_TestCase
                 __DIR__ . '/ResponseCacheTest/',
             ),
         );
+    }
+
+    /**
+     * @dataProvider providesTrimmedDirPaths
+     */
+    public function testIsInstantiatedUsingThePathOfADirectory($expectedDir, $actualDir)
+    {
+        $responseCache = new ResponseCache($actualDir);
+
+        $this->assertSame($expectedDir, $responseCache->getDir());
     }
 
     public function testConstructorThrowsAnExceptionIfTheSpecifiedDirectoryDoesNotExist()
