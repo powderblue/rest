@@ -22,6 +22,7 @@
 namespace Doctrine\REST\Client;
 
 use Doctrine\REST\Exception\HttpException;
+use Exception;
 
 /**
  * Basic class for issuing HTTP requests via PHP curl.
@@ -112,7 +113,13 @@ class Client
         if ($result === false) {
             $errorMessage = curl_errno($curl) . ': ' . curl_error($curl);
             curl_close($curl);
-            throw new \Exception($errorMessage);
+
+            throw new Exception(implode(' | ', [
+                $errorMessage,
+                $request->getUrl(),
+                http_build_query($request->getParameters()),
+                $request->getUsername(),
+            ]));
         }
 
         $httpStatusCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
