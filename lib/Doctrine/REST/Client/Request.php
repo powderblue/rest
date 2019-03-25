@@ -42,7 +42,7 @@ class Request
 
     public function setUrl($url)
     {
-        $this->_url = $url;
+        $this->_url = rtrim($url, '/');
     }
 
     public function getUrl()
@@ -60,9 +60,10 @@ class Request
         return $this->_method;
     }
 
-    public function setParameters($parameters)
+    public function setParameters($arguments)
     {
-        $this->_parameters = $parameters;
+        ksort($arguments);
+        $this->_parameters = $arguments;
     }
 
     public function getParameters()
@@ -108,5 +109,15 @@ class Request
     public function getResponseTransformerImpl()
     {
         return $this->_responseTransformerImpl;
+    }
+
+    /**
+     * Returns an ID for this request: the /request/, not the object.
+     * 
+     * @return string
+     */
+    public function getRequestId()
+    {
+        return md5(serialize($this));
     }
 }

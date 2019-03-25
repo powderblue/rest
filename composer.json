@@ -7,11 +7,13 @@
             "email": "jonwage@gmail.com"
     }],
     "require": {
-        "php": ">=5.3"
+        "php": ">=5.3",
+        "doctrine/inflector": "1.*"
     },
     "require-dev": {
         "ext-pdo_sqlite": "*",
-        "doctrine/orm": "v2.4.2"
+        "doctrine/orm": "v2.4.2",
+        "phpunit/phpunit": "^5.4"
     },
     "autoload": {
         "psr-4": { 

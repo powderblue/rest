@@ -1,23 +1,18 @@
 <?php
 
-namespace Doctrine\Tests\REST\Functional;
+namespace Doctrine\Tests\REST\NewFunctional;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\REST\Client\Manager;
 use Doctrine\REST\Client\Request;
 use Doctrine\REST\Client\Entity;
-use Doctrine\REST\Client\EntityConfiguration;
 use Doctrine\REST\Client\Client;
 use Doctrine\REST\Server\Server;
 use Doctrine\REST\Client\ResponseCache;
 
 class TestCase extends \PHPUnit_Framework_TestCase
 {
-    private $clientManager;
-
-    private $functiontalTestClient;
-
-    private function setUpRest($type)
+    private function createEntityManager()
     {
         $connectionOptions = array(
             'driver' => 'pdo_sqlite',
@@ -26,35 +21,67 @@ class TestCase extends \PHPUnit_Framework_TestCase
 
         $config = new \Doctrine\ORM\Configuration();
         $config->setMetadataCacheImpl(new \Doctrine\Common\Cache\ArrayCache);
-        $config->setProxyDir('/tmp');
+        $config->setProxyDir(sys_get_temp_dir());
         $config->setProxyNamespace('Proxies');
         $config->setMetadataDriverImpl($config->newDefaultAnnotationDriver());
 
-        $em = \Doctrine\ORM\EntityManager::create($connectionOptions, $config);
-        $classes = array($em->getMetadataFactory()->getMetadataFor(__NAMESPACE__ . '\DoctrineUser'));
+        $em = EntityManager::create($connectionOptions, $config);
+
+        return $em;
+    }
+
+    private function setUpTestDatabase(EntityManager $em, array $entityClassNames)
+    {
+        $classes = array();
+
+        foreach ($entityClassNames as $entityClassName) {
+            $classes[] = $em->getMetadataFactory()->getMetadataFor($entityClassName);
+        }
 
         $schemaTool = new \Doctrine\ORM\Tools\SchemaTool($em);
         $schemaTool->dropSchema($classes);
         $schemaTool->createSchema($classes);
-
-        if ($type === 'orm') {
-            $this->functiontalTestClient = new TestFunctionalClient('user', $em);
-        } else {
-            $this->functiontalTestClient = new TestFunctionalClient('user', $em->getConnection());
-        }
-
-        $this->clientManager = new Manager($this->functiontalTestClient, new ResponseCache(sys_get_temp_dir()));
-        $this->clientManager->registerEntity(__NAMESPACE__ . '\User');
-
-        Entity::setManager($this->clientManager);
     }
 
-    /**
-     * @dataProvider doctrineDatabaseLibNames
-     */
-    public function testActiveRecordApi($doctrineDatabaseLibName)
+    private function createClientManager($entityResourceName, EntityManager $em)
     {
-        $this->setUpRest($doctrineDatabaseLibName);
+        $functiontalTestClient = new TestFunctionalClient($entityResourceName, $em);
+        $responseCache = new ResponseCache(sys_get_temp_dir());
+        $clientManager = new Manager($functiontalTestClient, $responseCache);
+        return $clientManager;
+    }
+
+    public function testConfiguringEntitiesIsEasier()
+    {
+        //Set-up the test server:
+
+        $entityManager = $this->createEntityManager();
+
+        $this->setUpTestDatabase($entityManager, array(
+            __NAMESPACE__ . '\DoctrineUser',
+        ));
+
+        //Set-up the test client:
+
+        $clientManager = $this->createClientManager('users', $entityManager);
+
+        //1. Set default attribute values for entities that will be associated with this manager.  These settings do not
+        //need to be specified in each entity.
+
+        $clientManager->setDefaultEntityConfigurationAttributes(array(
+            'url' => 'api',
+        ));
+
+        //2. Register entities.  Configuration done.
+
+        $clientManager->registerEntity(__NAMESPACE__ . '\User');
+
+        $entityConfiguration = $clientManager->getEntityConfiguration(__NAMESPACE__ . '\User');
+
+        $this->assertEquals('users', $entityConfiguration->getName());
+        $this->assertEquals('api', $entityConfiguration->getUrl());
+
+        //3. Use entity classes
 
         $user1 = new User();
         $user1->setUsername('jwage');
@@ -63,42 +90,25 @@ class TestCase extends \PHPUnit_Framework_TestCase
         $this->assertEquals(1, $user1->getId());
 
         $user2 = new User();
-        $user2->setUsername('fabpot');
+        $user2->setUsername('danbettles');
         $user2->save();
 
         $this->assertEquals(2, $user2->getId());
 
-        $user3 = new User();
-        $user3->setUsername('romanb');
-        $user3->save();
+        $user2->setUsername('dan_bettles');
+        $user2->save();
+        $fetchedUser2 = User::find($user2->getId());
 
-        $this->assertEquals(3, $user3->getId());
+        $this->assertEquals('dan_bettles', $fetchedUser2->getUsername());
 
-        $user3->setUsername('romanb_new');
-        $user3->save();
+        $fetchedUsers = User::findAll();
 
-        $user3test = User::find($user3->getId());
-        $this->assertEquals('romanb_new', $user3test->getUsername());
+        $this->assertEquals(array($user1, $user2), $fetchedUsers);
 
-        $test = User::findAll();
-        $this->assertEquals(3, count($test));
-        $this->assertTrue($user1 === $test[0]);
-        $this->assertTrue($user2 === $test[1]);
-        $this->assertTrue($user3 === $test[2]);
+        $user2->delete();
+        $fetchedUsers = User::findAll();
 
-        $user3->delete();
-
-        $test = User::findAll();
-
-        $this->assertEquals(2, count($test));
-    }
-
-    public static function doctrineDatabaseLibNames()
-    {
-        return array(
-            array('orm'),
-            array('dbal'),
-        );
+        $this->assertEquals(array($user1), $fetchedUsers);
     }
 }
 
@@ -120,7 +130,7 @@ class TestFunctionalClient extends Client
         $requestArray = array_merge($requestArray, (array) $parameters);
         $server = new Server($this->source, $requestArray);
         if ($this->source instanceof EntityManager) {
-            $server->setEntityAlias(__NAMESPACE__ . '\DoctrineUser', 'user');
+            $server->setEntityAlias(__NAMESPACE__ . '\DoctrineUser', $this->name);
         }
         $response = $server->getRequestHandler()->execute();
         $data = $request->getResponseTransformerImpl()->transform($response->getContent());
@@ -134,7 +144,7 @@ class TestFunctionalClient extends Client
         $parameters = $request->getParameters();
         $responseType = $request->getResponseType();
 
-        // GET api/user/1.xml (get)
+        // GET api/users/1.xml (get)
         if ($method === 'GET' && preg_match_all('/api\/' . $this->name . '\/([0-9]).xml/', $url, $matches)) {
             $id = $matches[1][0];
             return $this->execServer($request, array(
@@ -146,7 +156,7 @@ class TestFunctionalClient extends Client
             ), $parameters, $responseType);
         }
 
-        // GET api/user.xml (list)
+        // GET api/users.xml (list)
         if ($method === 'GET' && preg_match_all('/api\/' . $this->name . '.xml/', $url, $matches)) {
             return $this->execServer($request, array(
                 '_method' => $method,
@@ -156,7 +166,7 @@ class TestFunctionalClient extends Client
             ), $parameters, $responseType);
         }
 
-        // PUT api/user.xml (insert)
+        // PUT api/users.xml (insert)
         if ($method === 'PUT' && preg_match_all('/api\/' . $this->name . '.xml/', $url, $matches)) {
             return $this->execServer($request, array(
                 '_method' => $method,
@@ -166,7 +176,7 @@ class TestFunctionalClient extends Client
             ), $parameters, $responseType);
         }
 
-        // POST api/user/1.xml (update)
+        // POST api/users/1.xml (update)
         if ($method === 'POST' && preg_match_all('/api\/' . $this->name . '\/([0-9]).xml/', $url, $matches)) {
             return $this->execServer($request, array(
                 '_method' => $method,
@@ -177,7 +187,7 @@ class TestFunctionalClient extends Client
             ), $parameters, $responseType);
         }
 
-        // DELETE api/user/1.xml (delete)
+        // DELETE api/users/1.xml (delete)
         if ($method === 'DELETE' && preg_match_all('/api\/' . $this->name . '\/([0-9]).xml/', $url, $matches)) {
             return $this->execServer($request, array(
                 '_method' => $method,
@@ -194,12 +204,6 @@ class User extends Entity
 {
     protected $id;
     protected $username;
-
-    public static function configure(EntityConfiguration $entityConfiguration)
-    {
-        $entityConfiguration->setUrl('api');
-        $entityConfiguration->setName('user');
-    }
 
     public function getId()
     {
