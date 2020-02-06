@@ -118,6 +118,6 @@ class Request
      */
     public function getRequestId()
     {
-        return md5(serialize($this));
+        return md5(json_encode(get_object_vars($this)));
     }
 }
