@@ -24,7 +24,8 @@ class TestCase extends \PHPUnit_Framework_TestCase
 
         $originalRequestId = $originalRequest->getRequestId();
 
-        $this->assertEquals('4fe8889a0cbf3922a4f7ff524c6fad76', $originalRequestId);
+        // The strign value here is arbitrary, but ensures nothing's changed in getRequestId()
+        $this->assertEquals('174fe1a03ef906aeaa6c121a74be636d', $originalRequestId);
 
         $similarResponseTransformer = new StandardResponseTransformer(new EntityConfiguration(__NAMESPACE__ . '\Entity01'));
         $similarRequest = new Request();

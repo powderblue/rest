@@ -12,12 +12,12 @@
     },
     "require-dev": {
         "ext-pdo_sqlite": "*",
-        "doctrine/orm": "v2.4.2",
+        "doctrine/orm": "^v2.7.2",
         "phpunit/phpunit": "^5.4"
     },
     "autoload": {
-        "psr-4": { 
-            "Doctrine\\REST\\": "lib/Doctrine/REST" 
+        "psr-4": {
+            "Doctrine\\REST\\": "lib/Doctrine/REST"
         }
     }
 }

@@ -25,6 +25,7 @@ use Doctrine\REST\Client\URLGenerator\StandardURLGenerator;
 use Doctrine\REST\Client\ResponseTransformer\StandardResponseTransformer;
 use Doctrine\REST\Client\URLGenerator\AbstractURLGenerator;
 use Doctrine\Common\Inflector\Inflector;
+use Doctrine\Inflector\InflectorFactory;
 
 /**
  * Entity configuration class holds all the configuration information for a PHP5
@@ -140,7 +141,7 @@ class EntityConfiguration
 
     /**
      * Returns TRUE if the attribute with the specified name exists, or FALSE otherwise.
-     * 
+     *
      * @param string $name
      * @return bool
      */
@@ -151,7 +152,7 @@ class EntityConfiguration
 
     /**
      * Throws an exception if the attribute with the specified name does not exist, or returns TRUE if it does.
-     * 
+     *
      * @param string $name
      * @return bool
      * @throws OutOfBoundsException If the specified attribute does not exist
@@ -167,7 +168,7 @@ class EntityConfiguration
 
     /**
      * Sets the value of the attribute with the specified name.
-     * 
+     *
      * @param string $name
      * @param mixed $value
      * @return void
@@ -181,7 +182,7 @@ class EntityConfiguration
 
     /**
      * Returns the value of the attribute with the specified name.
-     * 
+     *
      * @param string $name
      * @return mixed
      * @throws OutOfBoundsException If the specified attribute does not exist
@@ -194,7 +195,7 @@ class EntityConfiguration
 
     /**
      * Sets the value of each of the attributes named in the specified array.
-     * 
+     *
      * @param array $attributes
      * @return void
      */
@@ -210,7 +211,7 @@ class EntityConfiguration
 
     /**
      * Returns an array containing all attribute values.
-     * 
+     *
      * @return array
      */
     public function getAttributeValues()
@@ -220,7 +221,7 @@ class EntityConfiguration
 
     /**
      * Implements setters and getters for the attributes.
-     * 
+     *
      * @param string $name
      * @param array $arguments
      * @return mixed
@@ -247,7 +248,7 @@ class EntityConfiguration
 
     /**
      * Attribute setter, sets the base URL of the resource.
-     * 
+     *
      * @param string $url
      * @return void
      */
@@ -258,10 +259,10 @@ class EntityConfiguration
 
     /**
      * Attribute setter, sets the URL generator for the entity.
-     * 
-     * For backwards compatibility.  The case used in the name of this method is inconsistent with the case used in the 
+     *
+     * For backwards compatibility.  The case used in the name of this method is inconsistent with the case used in the
      * name of the attribute it sets.
-     * 
+     *
      * @param Doctrine\REST\Client\URLGenerator\AbstractURLGenerator $value
      * @return void
      */
@@ -272,10 +273,10 @@ class EntityConfiguration
 
     /**
      * Attribute getter, returns the URL generator for the entity.
-     * 
-     * For backwards compatibility.  The case used in the name of this method is inconsistent with the case used in the 
+     *
+     * For backwards compatibility.  The case used in the name of this method is inconsistent with the case used in the
      * name of the attribute it gets.
-     * 
+     *
      * @return Doctrine\REST\Client\URLGenerator\AbstractURLGenerator
      */
     public function getURLGeneratorImpl()
@@ -299,7 +300,7 @@ class EntityConfiguration
 
     /**
      * Returns a new instance of the entity class this configuration is associated with.
-     * 
+     *
      * @return \Doctrine\REST\Client\Entity
      */
     public function newInstance()
@@ -318,7 +319,7 @@ class EntityConfiguration
 
     /**
      * Derives the name of an entity from its class name.
-     * 
+     *
      * @param string $entityClassName
      * @return string
      */
@@ -327,7 +328,9 @@ class EntityConfiguration
         $nameParts = explode('\\', $entityClassName);
         $lastNamePart = array_pop($nameParts);
         $singularName = strtolower($lastNamePart);
-        $pluralName = Inflector::pluralize($singularName);
+
+        $pluralName = InflectorFactory::create()->build()->pluralize($singularName);
+
         return $pluralName;
     }
 }
