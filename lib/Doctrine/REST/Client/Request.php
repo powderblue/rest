@@ -113,11 +113,11 @@ class Request
 
     /**
      * Returns an ID for this request: the /request/, not the object.
-     * 
+     *
      * @return string
      */
     public function getRequestId()
     {
-        return md5(json_encode(get_object_vars($this)));
+        return md5(print_r($this, true));
     }
 }
