@@ -1,4 +1,5 @@
 <?php
+
 /*
  *  $Id$
  *
@@ -105,7 +106,7 @@ class Manager
 
     /**
      * Registers the entity class with the specified name.
-     * 
+     *
      * @param string $entityClassName
      * @return void
      */
@@ -127,15 +128,13 @@ class Manager
     }
 
     /**
-     * @param string|Doctrine\REST\Client\Entity $entity
-     * @return Doctrine\REST\Client\EntityConfiguration
      * @throws \InvalidArgumentException If it could not find entity configuration for the specified entity
      */
-    public function getEntityConfiguration($entity)
+    public function getEntityConfiguration(string|Entity $entity): EntityConfiguration
     {
         $entity = is_object($entity) ? get_class($entity) : $entity;
 
-        if (! isset($this->_entityConfigurations[$entity])) {
+        if (!isset($this->_entityConfigurations[$entity])) {
             throw new \InvalidArgumentException("Could not find entity configuration for \"{$entity}\"");
         }
 
@@ -144,7 +143,7 @@ class Manager
 
     /**
      * Sets the attributes that will be applied to all new entity configurations created by this manager.
-     * 
+     *
      * @param array $attributes
      * @return void
      */
@@ -155,7 +154,7 @@ class Manager
 
     /**
      * Returns the attributes that will be applied to all new entity configurations created by this manager.
-     * 
+     *
      * @return array
      */
     public function getDefaultEntityConfigurationAttributes()
@@ -172,18 +171,16 @@ class Manager
     {
         $configuration = $this->getEntityConfiguration($entity);
         $identifierKey = $configuration->getIdentifierKey();
+
         return $configuration->getValue($entity, $identifierKey);
     }
 
-    /**
-     * @param Doctrine\REST\Client\EntityConfiguration $entityConfiguration
-     * @param string $httpMethod
-     * @param string $url
-     * @param array [$arguments = array()]
-     * @return Doctrine\REST\Client\Request
-     */
-    private function createRequest(EntityConfiguration $entityConfiguration, $httpMethod, $url, array $arguments = array())
-    {
+    private function createRequest(
+        EntityConfiguration $entityConfiguration,
+        string $httpMethod,
+        string $url,
+        array $arguments = []
+    ): Request {
         $request = new Request();
         $request->setUrl($url);
         $request->setMethod($httpMethod);

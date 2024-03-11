@@ -1,4 +1,5 @@
 <?php
+
 /*
  *  $Id$
  *
@@ -34,8 +35,8 @@ class UpdateAction extends AbstractAction
 {
     public function executeORM()
     {
-        if ($entity = $this->_findEntityById()) {
-            $this->_updateEntityInstance($entity);
+        if ($entity = $this->findEntityById()) {
+            $this->updateEntityInstance($entity);
             $this->_source->flush();
         }
 
@@ -44,14 +45,14 @@ class UpdateAction extends AbstractAction
 
     public function executeDBAL()
     {
-        $entity = $this->_getEntity();
-        $identifierKey = $this->_getEntityIdentifierKey($entity);
+        $entity = $this->getEntity();
+        $identifierKey = $this->getEntityIdentifierKey($entity);
 
-        $data = $this->_gatherData();
+        $data = $this->gatherData();
         $this->_source->update($entity, $data, array(
             $identifierKey => $this->_request['_id']
         ));
 
-        return $this->_findEntityById();
+        return $this->findEntityById();
     }
 }

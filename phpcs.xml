@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<ruleset name="Doctrine REST Coding Standard">
+    <config name="ignore_warnings_on_exit" value="1"/>
+
+    <file>docs/</file>
+    <file>lib/</file>
+    <file>tests/</file>
+
+    <arg name="extensions" value="php"/>
+    <arg value="p"/>
+    <arg name="colors"/>
+
+    <rule ref="PSR12">
+        <exclude name="Generic.Files.LineLength"/>
+    </rule>
+</ruleset>

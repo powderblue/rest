@@ -11,8 +11,10 @@ use Doctrine\REST\Client\ResponseTransformer\StandardResponseTransformer;
 use Doctrine\REST\Client\ResponseCache;
 use Doctrine\REST\Client\Request;
 use Doctrine\REST\Exception\HttpException;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\TestCase;
 
-class TestCase extends \PHPUnit_Framework_TestCase
+class ManagerTest extends TestCase
 {
     private function createResponseCache($className = 'Doctrine\REST\Client\ResponseCache')
     {
@@ -27,7 +29,7 @@ class TestCase extends \PHPUnit_Framework_TestCase
         return $manager;
     }
 
-    protected function setUp()
+    protected function setUp(): void
     {
         //Remove all cache files associated with all test entity classes
         $this->createResponseCache()->emptyByEntityClassNames(array(
@@ -88,6 +90,8 @@ class TestCase extends \PHPUnit_Framework_TestCase
 
     public function testRegisterentityDoesNotRequireEachEntityToHaveAConfigureMethod()
     {
+        $this->expectNotToPerformAssertions();
+
         $entityClassName = __NAMESPACE__ . '\Entity02';
 
         $manager = $this->createManager();
@@ -162,9 +166,7 @@ class TestCase extends \PHPUnit_Framework_TestCase
         ), $entityInstance->toArray());
     }
 
-    /**
-     * @dataProvider uncacheableHttpMethods
-     */
+    #[DataProvider('uncacheableHttpMethods')]
     public function testExecuteAlwaysReturnsALiveResponseIfTheRequestMethodIsNotGet($uncacheableHttpMethod)
     {
         $entity = __NAMESPACE__ . '\Entity05';
@@ -230,6 +232,7 @@ class TestCase extends \PHPUnit_Framework_TestCase
     }
 }
 
+// phpcs:disable
 class Entity01 extends Entity
 {
     public static function configure(EntityConfiguration $entityConfiguration)
@@ -333,3 +336,4 @@ class ResponseCache01 extends ResponseCache
         return $something;
     }
 }
+// phpcs:enable

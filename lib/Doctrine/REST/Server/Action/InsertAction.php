@@ -1,4 +1,5 @@
 <?php
+
 /*
  *  $Id$
  *
@@ -34,10 +35,10 @@ class InsertAction extends AbstractAction
 {
     public function executeORM()
     {
-        $entity = $this->_getEntity();
+        $entity = $this->getEntity();
 
         $instance = new $entity();
-        $this->_updateEntityInstance($instance);
+        $this->updateEntityInstance($instance);
         $this->_source->persist($instance);
         $this->_source->flush();
 
@@ -46,10 +47,10 @@ class InsertAction extends AbstractAction
 
     public function executeDBAL()
     {
-        $entity = $this->_getEntity();
-        $identifierKey = $this->_getEntityIdentifierKey();
+        $entity = $this->getEntity();
+        $identifierKey = $this->getEntityIdentifierKey();
 
-        $data = $this->_gatherData();
+        $data = $this->gatherData();
 
         unset($data['id']);
         $this->_source->insert($entity, $data);

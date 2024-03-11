@@ -1,3 +1,2 @@
-/nbproject/
-/vendor/
-/tests/Doctrine/Tests/REST/Client/ResponseCacheTest/Doctrine
+tests/Doctrine/Tests/REST/Client/ResponseCacheTest/Doctrine
+vendor/

@@ -3,8 +3,9 @@
 namespace Doctrine\Tests\REST\Exception\HttpException;
 
 use Doctrine\REST\Exception\HttpException;
+use PHPUnit\Framework\TestCase;
 
-class TestCase extends \PHPUnit_Framework_TestCase
+class HttpExceptionTest extends TestCase
 {
     public function testIsAPhpException()
     {

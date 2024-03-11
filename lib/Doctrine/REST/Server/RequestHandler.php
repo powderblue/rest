@@ -1,4 +1,5 @@
 <?php
+
 /*
  *  $Id$
  *
@@ -191,10 +192,10 @@ class RequestHandler
             }
 
             $this->_response->setResponseData(
-                $this->_transformResultForResponse($result)
+                $this->transformResultForResponse($result)
             );
         } catch (\Exception $e) {
-            $this->_response->setError($this->_getExceptionErrorMessage($e));
+            $this->_response->setError($this->getExceptionErrorMessage($e));
         }
         return $this->_response;
     }
@@ -217,7 +218,7 @@ class RequestHandler
         }
     }
 
-    private function _getExceptionErrorMessage(\Exception $e)
+    private function getExceptionErrorMessage(\Exception $e)
     {
         $message = $e->getMessage();
 
@@ -228,20 +229,28 @@ class RequestHandler
         return $message;
     }
 
-    private function _transformResultForResponse($result, $array = null)
+    private function transformResultForResponse($result, $array = null)
     {
         if (! $array) {
             $array = array();
         }
+
         if (is_object($result)) {
             $entityName = get_class($result);
+
             if ($this->_source instanceof EntityManager) {
                 $class = $this->_source->getMetadataFactory()->getMetadataFor($entityName);
+
                 foreach ($class->fieldMappings as $fieldMapping) {
-                    $array[$fieldMapping['fieldName']] = $class->getReflectionProperty($fieldMapping['fieldName'])->getValue($result);
+                    $array[$fieldMapping['fieldName']] = $class
+                        ->getReflectionClass()
+                        ->getProperty($fieldMapping['fieldName'])
+                        ->getValue($result)
+                    ;
                 }
             } else {
                 $vars = get_object_vars($result);
+
                 foreach ($vars as $key => $value) {
                     $array[$key] = $value;
                 }
@@ -252,7 +261,7 @@ class RequestHandler
                     if (is_object($value)) {
                         $key = $this->_request['_entity'] . $key;
                     }
-                    $array[$key] = $this->_transformResultForResponse($value, isset($array[$key]) ? $array[$key] : array());
+                    $array[$key] = $this->transformResultForResponse($value, isset($array[$key]) ? $array[$key] : array());
                 } else {
                     $array[$key] = $value;
                 }

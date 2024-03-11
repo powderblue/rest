@@ -1,4 +1,5 @@
 <?php
+
 /*
  *  $Id$
  *
@@ -34,7 +35,7 @@ class GetAction extends AbstractAction
 {
     public function execute()
     {
-        $entity = $this->_findEntityById();
+        $entity = $this->findEntityById();
 
         if (! $entity) {
             throw new \InvalidArgumentException(sprintf('Could not find the "%s" with an id of "%s"', $this->_request['_entity'], implode(', ', (array) $this->_request['_id'])));

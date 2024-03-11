@@ -8,12 +8,13 @@ use Doctrine\REST\Client\Entity;
 use Doctrine\REST\Client\EntityConfiguration;
 use Doctrine\REST\Client\Client;
 use Doctrine\REST\Client\ResponseCache;
+use PHPUnit\Framework\TestCase;
 
-class TestCase extends \PHPUnit_Framework_TestCase
+class ClientTest extends TestCase
 {
     private $client;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $this->client = new TestClient();
         $responseCache = new ResponseCache(sys_get_temp_dir());
@@ -140,6 +141,7 @@ class TestCase extends \PHPUnit_Framework_TestCase
     }
 }
 
+// phpcs:disable
 class Status extends Entity
 {
     private $id;
@@ -231,3 +233,4 @@ class TestClient extends Client
         return array();
     }
 }
+// phpcs:enable

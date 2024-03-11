@@ -6,12 +6,13 @@ use Doctrine\REST\Client\Manager;
 use Doctrine\REST\Client\Entity;
 use Doctrine\REST\Client\ResponseCache;
 use Doctrine\REST\Client\Client;
+use PHPUnit\Framework\TestCase;
 
-class TestCase extends \PHPUnit_Framework_TestCase
+class EntityTest extends TestCase
 {
     /**
      * Factory method.
-     * 
+     *
      * @return \Doctrine\REST\Client\Manager
      */
     private function createManager()
@@ -19,7 +20,7 @@ class TestCase extends \PHPUnit_Framework_TestCase
         return new Manager(new Client(), new ResponseCache(sys_get_temp_dir()));
     }
 
-    protected function setUp()
+    protected function setUp(): void
     {
         Entity::removeManager();
     }
@@ -88,6 +89,7 @@ class TestCase extends \PHPUnit_Framework_TestCase
     }
 }
 
+// phpcs:disable
 class Test01 extends Entity
 {
 }
@@ -107,3 +109,4 @@ class Test04 extends Entity
 class Test05 extends Entity
 {
 }
+// phpcs:enable

@@ -1,1 +1,0 @@
-watch(/\.php$/) { |md| system('clear; phing test') }

@@ -13,11 +13,22 @@
     "require-dev": {
         "ext-pdo_sqlite": "*",
         "doctrine/orm": "^v2.7.2",
-        "phpunit/phpunit": "^5.4"
+        "phpunit/phpunit": "^11.0",
+        "squizlabs/php_codesniffer": "^3.9",
+        "doctrine/cache": "^1.13",
+        "doctrine/annotations": "^1.14.3"
     },
     "autoload": {
         "psr-4": {
             "Doctrine\\REST\\": "lib/Doctrine/REST"
         }
+    },
+    "scripts": {
+        "dev:code:test": "phpunit --colors=always tests/",
+        "dev:code:lint": "phpcs --standard=phpcs.xml",
+        "dev:code:check-quality": [
+            "@dev:code:test",
+            "@dev:code:lint"
+        ]
     }
 }

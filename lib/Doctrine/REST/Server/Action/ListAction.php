@@ -1,4 +1,5 @@
 <?php
+
 /*
  *  $Id$
  *
@@ -34,19 +35,19 @@ class ListAction extends AbstractAction
 {
     public function executeORM()
     {
-        $entity = $this->_getEntity();
+        $entity = $this->getEntity();
         $qb = $this->_source->createQueryBuilder()
             ->select('a')
             ->from($entity, 'a');
 
-        $data = $this->_gatherData();
+        $data = $this->gatherData();
         foreach ($data as $key => $value) {
             $qb->andWhere("a.$key = :$key");
             $qb->setParameter($key, $value);
         }
 
         $query = $qb->getQuery();
-        $this->_setQueryFirstAndMax($query);
+        $this->setQueryFirstAndMax($query);
         $results = $query->execute();
 
         return $results;
@@ -54,11 +55,11 @@ class ListAction extends AbstractAction
 
     public function executeDBAL()
     {
-        $entity = $this->_getEntity();
+        $entity = $this->getEntity();
 
         $params = array();
         $query = sprintf('SELECT * FROM %s', $entity);
-        if ($data = $this->_gatherData()) {
+        if ($data = $this->gatherData()) {
             $query .= ' WHERE ';
             foreach ($data as $key => $value) {
                 $query .= $key . ' = ? AND ';
@@ -66,7 +67,7 @@ class ListAction extends AbstractAction
             }
             $query = substr($query, 0, strlen($query) - 5);
         }
-        $query = $this->_setQueryFirstAndMax($query);
+        $query = $this->setQueryFirstAndMax($query);
         $results = $this->_source->fetchAll($query, $params);
 
         return $results;

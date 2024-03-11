@@ -5,8 +5,9 @@ namespace Doctrine\Tests\REST\Client\ResponseTransformer\StandardResponseTransfo
 use Doctrine\REST\Client\Entity;
 use Doctrine\REST\Client\EntityConfiguration;
 use Doctrine\REST\Client\ResponseTransformer\StandardResponseTransformer;
+use PHPUnit\Framework\TestCase;
 
-class TestCase extends \PHPUnit_Framework_TestCase
+class StandardResponseTransformerTest extends TestCase
 {
     public function testTransformsXmlIntoAnArray()
     {
@@ -80,6 +81,7 @@ END;
     }
 }
 
+// phpcs:disable
 class User extends Entity
 {
     protected $id;
@@ -100,3 +102,4 @@ class User extends Entity
         $this->username = $username;
     }
 }
+// phpcs:enable

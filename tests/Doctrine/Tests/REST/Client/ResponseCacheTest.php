@@ -7,15 +7,17 @@ use Doctrine\REST\Client\Client;
 use Doctrine\REST\Client\EntityConfiguration;
 use Doctrine\REST\Client\Entity;
 use Doctrine\REST\Client\ResponseCache;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\TestCase;
 
-class TestCase extends \PHPUnit_Framework_TestCase
+class ResponseCacheTest extends TestCase
 {
     private function createResponseCache()
     {
         return new ResponseCache(__DIR__ . '/ResponseCacheTest');
     }
 
-    protected function setUp()
+    protected function setUp(): void
     {
         //Remove all cache files associated with all test entity classes
         $this->createResponseCache()->emptyByEntityClassNames(array(
@@ -57,9 +59,7 @@ class TestCase extends \PHPUnit_Framework_TestCase
         );
     }
 
-    /**
-     * @dataProvider providesTrimmedDirPaths
-     */
+    #[DataProvider('providesTrimmedDirPaths')]
     public function testIsInstantiatedUsingThePathOfADirectory($expectedDir, $actualDir)
     {
         $responseCache = new ResponseCache($actualDir);
@@ -78,9 +78,7 @@ class TestCase extends \PHPUnit_Framework_TestCase
         $this->fail();
     }
 
-    /**
-     * @dataProvider something
-     */
+    #[DataProvider('something')]
     public function testGetiffreshReturnsTheValueSetUsingSet($cacheResponse, $originalResponse, $entityClassName)
     {
         $responseCache = $this->createResponseCache();
@@ -178,6 +176,7 @@ class TestCase extends \PHPUnit_Framework_TestCase
     }
 }
 
+// phpcs:disable
 class Entity01 extends Entity
 {
     private $username;
@@ -259,3 +258,4 @@ class Entity07 extends Entity
         $entityConfiguration->setCacheTtl(60);
     }
 }
+// phpcs:enable

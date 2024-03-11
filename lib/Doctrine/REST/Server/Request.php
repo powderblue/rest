@@ -1,4 +1,5 @@
 <?php
+
 /*
  *  $Id$
  *
@@ -45,7 +46,7 @@ class Request implements \ArrayAccess
         return $this->_data;
     }
 
-    public function offsetSet($key, $value)
+    public function offsetSet($key, $value): void
     {
         $this->_data[$key] = $value;
     }
@@ -55,12 +56,12 @@ class Request implements \ArrayAccess
         return isset($this->_data[$key]) ? $this->_data[$key] : null;
     }
 
-    public function offsetUnset($key)
+    public function offsetUnset($key): void
     {
         unset($this->_data[$key]);
     }
 
-    public function offsetExists($key)
+    public function offsetExists($key): bool
     {
         return isset($this->_data[$key]);
     }

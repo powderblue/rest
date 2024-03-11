@@ -1,4 +1,5 @@
 <?php
+
 /*
  *  $Id$
  *
@@ -54,17 +55,17 @@ abstract class AbstractAction
     {
     }
 
-    protected function _getEntity()
+    protected function getEntity()
     {
         return $this->_requestHandler->getEntity();
     }
 
-    protected function _getEntityIdentifierKey()
+    protected function getEntityIdentifierKey()
     {
-        return $this->_requestHandler->getEntityIdentifierKey($this->_getEntity());
+        return $this->_requestHandler->getEntityIdentifierKey($this->getEntity());
     }
 
-    protected function _setQueryFirstAndMax($q)
+    protected function setQueryFirstAndMax($q)
     {
         if (! isset($this->_request['_page']) && ! isset($this->_request['_first']) && ! isset($this->_request['_max'])) {
             $this->_request['_page'] = '1';
@@ -93,10 +94,10 @@ abstract class AbstractAction
         }
     }
 
-    protected function _findEntityById()
+    protected function findEntityById()
     {
         if ($this->_source instanceof EntityManager) {
-            $entity = $this->_getEntity();
+            $entity = $this->getEntity();
             $id = $this->_request['_id'];
 
             $qb = $this->_source->createQueryBuilder()
@@ -109,17 +110,17 @@ abstract class AbstractAction
             return $query->getSingleResult();
         }
 
-        $entity = $this->_getEntity();
-        $identifierKey = $this->_getEntityIdentifierKey($entity);
+        $entity = $this->getEntity();
+        $identifierKey = $this->getEntityIdentifierKey($entity);
 
         $query = sprintf('SELECT * FROM %s WHERE %s = ?', $entity, $identifierKey);
         $statement = $this->_source->executeQuery($query, array($this->_request['_id']));
         return $statement->fetch(\PDO::FETCH_OBJ);
     }
 
-    protected function _updateEntityInstance($entity)
+    protected function updateEntityInstance($entity)
     {
-        $data = $this->_gatherData($this->_request->getData());
+        $data = $this->gatherData($this->_request->getData());
         foreach ($data as $key => $value) {
             $setter = 'set' . ucfirst($key);
             if (is_callable(array($entity, $setter))) {
@@ -129,7 +130,7 @@ abstract class AbstractAction
         return $entity;
     }
 
-    protected function _gatherData()
+    protected function gatherData()
     {
         $data = array();
         foreach ($this->_request->getData() as $key => $value) {

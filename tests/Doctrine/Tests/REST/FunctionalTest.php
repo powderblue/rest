@@ -2,6 +2,7 @@
 
 namespace Doctrine\Tests\REST\Functional;
 
+use Doctrine\Common\Cache\ArrayCache;
 use Doctrine\ORM\EntityManager;
 use Doctrine\REST\Client\Manager;
 use Doctrine\REST\Client\Request;
@@ -10,14 +11,16 @@ use Doctrine\REST\Client\EntityConfiguration;
 use Doctrine\REST\Client\Client;
 use Doctrine\REST\Server\Server;
 use Doctrine\REST\Client\ResponseCache;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\TestCase;
 
-class TestCase extends \PHPUnit_Framework_TestCase
+class FunctionalTest extends TestCase
 {
-    private $clientManager;
+    private Manager $clientManager;
 
-    private $functiontalTestClient;
+    private TestFunctionalClient $functiontalTestClient;
 
-    private function setUpRest($type)
+    private function setUpRest($type): void
     {
         $connectionOptions = array(
             'driver' => 'pdo_sqlite',
@@ -25,7 +28,7 @@ class TestCase extends \PHPUnit_Framework_TestCase
         );
 
         $config = new \Doctrine\ORM\Configuration();
-        $config->setMetadataCacheImpl(new \Doctrine\Common\Cache\ArrayCache);
+        $config->setMetadataCacheImpl(new ArrayCache());
         $config->setProxyDir('/tmp');
         $config->setProxyNamespace('Proxies');
         $config->setMetadataDriverImpl($config->newDefaultAnnotationDriver());
@@ -49,12 +52,19 @@ class TestCase extends \PHPUnit_Framework_TestCase
         Entity::setManager($this->clientManager);
     }
 
-    /**
-     * @dataProvider doctrineDatabaseLibNames
-     */
-    public function testActiveRecordApi($doctrineDatabaseLibName)
+    /** @return array<mixed[]> */
+    public static function providesDbLibNames(): array
     {
-        $this->setUpRest($doctrineDatabaseLibName);
+        return [
+            ['orm'],
+            // ['dbal'],
+        ];
+    }
+
+    #[DataProvider('providesDbLibNames')]
+    public function testActiveRecordApi(string $dbLibName): void
+    {
+        $this->setUpRest($dbLibName);
 
         $user1 = new User();
         $user1->setUsername('jwage');
@@ -92,16 +102,9 @@ class TestCase extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(2, count($test));
     }
-
-    public static function doctrineDatabaseLibNames()
-    {
-        return array(
-            array('orm'),
-            array('dbal'),
-        );
-    }
 }
 
+// phpcs:disable
 class TestFunctionalClient extends Client
 {
     public $name;
@@ -239,3 +242,4 @@ class DoctrineUser
         $this->username = $username;
     }
 }
+// phpcs:enable

@@ -1,4 +1,5 @@
 <?php
+
 /*
  *  $Id$
  *
@@ -76,7 +77,7 @@ class StandardResponseTransformer extends AbstractResponseTransformer
 
     /**
      * @param \SimpleXMLElement $element
-     * @param array &$array The array to attach the value or child values to 
+     * @param array &$array The array to attach the value or child values to
      */
     private function attachElementValueToArray(\SimpleXMLElement $element, array &$array)
     {

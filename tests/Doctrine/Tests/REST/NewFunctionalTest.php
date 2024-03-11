@@ -9,8 +9,9 @@ use Doctrine\REST\Client\Entity;
 use Doctrine\REST\Client\Client;
 use Doctrine\REST\Server\Server;
 use Doctrine\REST\Client\ResponseCache;
+use PHPUnit\Framework\TestCase;
 
-class TestCase extends \PHPUnit_Framework_TestCase
+class NewFunctionalTest extends TestCase
 {
     private function createEntityManager()
     {
@@ -20,7 +21,7 @@ class TestCase extends \PHPUnit_Framework_TestCase
         );
 
         $config = new \Doctrine\ORM\Configuration();
-        $config->setMetadataCacheImpl(new \Doctrine\Common\Cache\ArrayCache);
+        $config->setMetadataCacheImpl(new \Doctrine\Common\Cache\ArrayCache());
         $config->setProxyDir(sys_get_temp_dir());
         $config->setProxyNamespace('Proxies');
         $config->setMetadataDriverImpl($config->newDefaultAnnotationDriver());
@@ -112,6 +113,7 @@ class TestCase extends \PHPUnit_Framework_TestCase
     }
 }
 
+// phpcs:disable
 class TestFunctionalClient extends Client
 {
     public $name;
@@ -243,3 +245,4 @@ class DoctrineUser
         $this->username = $username;
     }
 }
+// phpcs:enable

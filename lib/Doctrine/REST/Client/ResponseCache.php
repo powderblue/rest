@@ -1,4 +1,5 @@
 <?php
+
 /*
  *  $Id$
  *
@@ -51,7 +52,7 @@ class ResponseCache
 
     /**
      * Sets the path of the directory in which cache files are, or will be, stored.
-     * 
+     *
      * @param string $dir
      * @return void
      * @throws \RuntimeException If the directory does not exist
@@ -67,7 +68,7 @@ class ResponseCache
 
     /**
      * Returns the path of the directory in which cache files are, or will be, stored.
-     * 
+     *
      * @return string
      */
     public function getDir()
@@ -77,7 +78,7 @@ class ResponseCache
 
     /**
      * Returns the path of the directory in which cache files associated with the specified entity class will be stored.
-     * 
+     *
      * @param string $entityClassName
      * @return string
      */
@@ -88,7 +89,7 @@ class ResponseCache
 
     /**
      * Returns the filename of the file in which a response to the specified request is, or will be, stored.
-     * 
+     *
      * @param string $entityClassName
      * @param \Doctrine\REST\Client\Request $request
      * @return string
@@ -101,7 +102,7 @@ class ResponseCache
 
     /**
      * Stores a response in the cache.
-     * 
+     *
      * @param \Doctrine\REST\Client\EntityConfiguration $entityConfiguration
      * @param \Doctrine\REST\Client\Request $request
      * @param array $response
@@ -127,7 +128,7 @@ class ResponseCache
 
     /**
      * Returns the parsed contents of the file with the specified filename.
-     * 
+     *
      * @param string $filename
      * @return mixed
      * @throws \RuntimeException If it failed to get the contents of the specified filename
@@ -145,7 +146,7 @@ class ResponseCache
 
     /**
      * Returns the content associated with the arguments, if it hasn't expired, or FALSE otherwise.
-     * 
+     *
      * @param \Doctrine\REST\Client\EntityConfiguration $entityConfiguration
      * @param \Doctrine\REST\Client\Request $request
      * @return mixed
@@ -176,9 +177,9 @@ class ResponseCache
 
     /**
      * Removes all cache files associated with each of the specified entity classes.
-     * 
+     *
      * Calling this is a quick-and-dirty way of performing housekeeping.
-     * 
+     *
      * @param array $entityClassNames
      * @return void
      */

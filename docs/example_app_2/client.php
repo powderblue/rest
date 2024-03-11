@@ -1,7 +1,8 @@
 <?php
+
 /**
- * This example demonstrates an alternative way of configuring entity classes.  In this example, the URL of the server 
- * is 'inherited' from the manager with which the entity is associated.  Also, we let the library derive the server's 
+ * This example demonstrates an alternative way of configuring entity classes.  In this example, the URL of the server
+ * is 'inherited' from the manager with which the entity is associated.  Also, we let the library derive the server's
  * name for the entity.
  */
 

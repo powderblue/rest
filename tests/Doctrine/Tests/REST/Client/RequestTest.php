@@ -7,8 +7,9 @@ use Doctrine\REST\Client\Client;
 use Doctrine\REST\Client\ResponseTransformer\StandardResponseTransformer;
 use Doctrine\REST\Client\EntityConfiguration;
 use Doctrine\REST\Client\Entity;
+use PHPUnit\Framework\TestCase;
 
-class TestCase extends \PHPUnit_Framework_TestCase
+class RequestTest extends TestCase
 {
     public function testGetrequestidReturnsAnIdForTheRequest()
     {
@@ -128,6 +129,7 @@ class TestCase extends \PHPUnit_Framework_TestCase
     }
 }
 
+// phpcs:disable
 class Entity01 extends Entity
 {
     private $foo;
@@ -141,3 +143,4 @@ class Entity02 extends Entity
 
     private $bar;
 }
+// phpcs:enable

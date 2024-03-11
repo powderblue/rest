@@ -1,4 +1,5 @@
 <?php
+
 /*
  *  $Id$
  *
@@ -59,7 +60,7 @@ class Response
 
     public function send()
     {
-        $this->_sendHeaders();
+        $this->sendHeaders();
         echo $this->getContent();
     }
 
@@ -76,11 +77,11 @@ class Response
 
             case 'xml':
             default:
-                return $this->_arrayToXml($data, $this->_request['_entity']);
+                return $this->arrayToXml($data, $this->_request['_entity']);
         }
     }
 
-    private function _sendHeaders()
+    private function sendHeaders()
     {
         if ($this->_requestHandler->getUsername()) {
             if (! isset($_SERVER['PHP_AUTH_USER'])) {
@@ -109,7 +110,7 @@ class Response
         }
     }
 
-    private function _arrayToXml($array, $rootNodeName = 'doctrine', $xml = null, $charset = null)
+    private function arrayToXml($array, $rootNodeName = 'doctrine', $xml = null, $charset = null)
     {
         if ($xml === null) {
             $xml = new \SimpleXmlElement("<?xml version=\"1.0\" encoding=\"utf-8\"?><$rootNodeName/>");
@@ -123,7 +124,7 @@ class Response
 
             if (is_array($value) && ! empty($value)) {
                 $node = $xml->addChild($key);
-                $this->_arrayToXml($value, $rootNodeName, $node, $charset);
+                $this->arrayToXml($value, $rootNodeName, $node, $charset);
             } elseif ($value) {
                 $charset = $charset ? $charset : 'utf-8';
                 if (strcasecmp($charset, 'utf-8') !== 0 && strcasecmp($charset, 'utf8') !== 0) {
@@ -134,10 +135,10 @@ class Response
             }
         }
 
-        return $this->_formatXml($xml);
+        return $this->formatXml($xml);
     }
 
-    private function _formatXml($simpleXml)
+    private function formatXml($simpleXml)
     {
         $xml = $simpleXml->asXml();
 
@@ -167,7 +168,7 @@ class Response
             }
 
             // pad the line with the required number of leading spaces
-            $line = str_pad($token, strlen($token)+$pad, ' ', STR_PAD_LEFT);
+            $line = str_pad($token, strlen($token) + $pad, ' ', STR_PAD_LEFT);
             $result .= $line . "\n"; // add to the cumulative result, with linefeed
             $token = strtok("\n"); // get the next token
             $pad += $indent; // update the pad size for subsequent lines

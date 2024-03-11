@@ -1,4 +1,5 @@
 <?php
+
 /*
  *  $Id$
  *
@@ -40,7 +41,7 @@ abstract class Entity
 
     /**
      * Sets the manager for the called class.
-     * 
+     *
      * @param \Doctrine\REST\Client\Manager $manager
      * @return void
      */
@@ -51,7 +52,7 @@ abstract class Entity
 
     /**
      * Returns TRUE if the called class has a manager, or FALSE otherwise.
-     * 
+     *
      * @return bool
      */
     public static function hasManager()
@@ -61,7 +62,7 @@ abstract class Entity
 
     /**
      * Removes the manager for the called class.
-     * 
+     *
      * @return void
      */
     public static function removeManager()
@@ -71,7 +72,7 @@ abstract class Entity
 
     /**
      * Returns the manager for the called `Entity` subclass, or the manager for `Entity`, if it has one.
-     * 
+     *
      * @return Doctrine\REST\Client\Entity
      * @throws \RuntimeException If the called class does not have its own entity manager and there is no default
      * @todo Remove the fallback?

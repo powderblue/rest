@@ -1,4 +1,5 @@
 <?php
+
 /*
  *  $Id$
  *
@@ -34,7 +35,7 @@ class DeleteAction extends AbstractAction
 {
     public function executeORM()
     {
-        if ($entity = $this->_findEntityById()) {
+        if ($entity = $this->findEntityById()) {
             $this->_source->remove($entity);
             $this->_source->flush();
             return $entity;
@@ -43,9 +44,9 @@ class DeleteAction extends AbstractAction
 
     public function executeDBAL()
     {
-        if ($entity = $this->_findEntityById()) {
-            $this->_source->delete($this->_getEntity(), array(
-                $this->_getEntityIdentifierKey() => $this->_request['_id']
+        if ($entity = $this->findEntityById()) {
+            $this->_source->delete($this->getEntity(), array(
+                $this->getEntityIdentifierKey() => $this->_request['_id']
             ));
             return $entity;
         }

@@ -6,8 +6,10 @@ use Doctrine\REST\Client\Entity;
 use Doctrine\REST\Client\EntityConfiguration;
 use Doctrine\REST\Client\URLGenerator\StandardURLGenerator;
 use Doctrine\REST\Client\ResponseTransformer\StandardResponseTransformer;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\TestCase;
 
-class TestCase extends \PHPUnit_Framework_TestCase
+class EntityConfigurationTest extends TestCase
 {
     public function testGeturlReturnsTheValueOfTheUrlAttributeSetUsingSeturl()
     {
@@ -143,9 +145,7 @@ class TestCase extends \PHPUnit_Framework_TestCase
         $this->fail();
     }
 
-    /**
-     * @dataProvider pluralizedEntityClassNames
-     */
+    #[DataProvider('pluralizedEntityClassNames')]
     public function testConstructorDerivesTheNameOfTheEntityIfNotSpecified($name, $className)
     {
         $configuration = new EntityConfiguration($className);
@@ -194,6 +194,7 @@ class TestCase extends \PHPUnit_Framework_TestCase
     }
 }
 
+// phpcs:disable
 class Entity01 extends Entity
 {
     private $foo;
@@ -217,3 +218,4 @@ class Person extends Entity
 {
     private $foo;
 }
+// phpcs:enable

@@ -1,4 +1,5 @@
 <?php
+
 /*
  *  $Id$
  *
@@ -24,6 +25,9 @@ namespace Doctrine\REST\Client;
 use Doctrine\REST\Exception\HttpException;
 use Exception;
 
+use const CURLOPT_USERAGENT;
+use const false;
+
 /**
  * Basic class for issuing HTTP requests via PHP curl.
  *
@@ -35,16 +39,10 @@ use Exception;
  */
 class Client
 {
-    /**#@+
-     * HTTP method
-     * 
-     * @var string
-     */
-    const POST   = 'POST';
-    const GET    = 'GET';
-    const PUT    = 'PUT';
-    const DELETE = 'DELETE';
-    /**#@-*/
+    final public const string POST = 'POST';
+    final public const string GET = 'GET';
+    final public const string PUT = 'PUT';
+    final public const string DELETE = 'DELETE';
 
     public function post(Request $request)
     {
@@ -74,6 +72,7 @@ class Client
     {
         $options = array(
             CURLOPT_URL => $request->getUrl(),
+            CURLOPT_USERAGENT => 'Doctrine/REST',
             CURLOPT_FOLLOWLOCATION => 1,
             CURLOPT_RETURNTRANSFER => 1,
             CURLOPT_HTTPHEADER => array('Expect:'),
@@ -94,6 +93,7 @@ class Client
                 $options[CURLOPT_POST] = 1;
                 $options[CURLOPT_POSTFIELDS] = http_build_query($request->getParameters());
                 break;
+
             case self::DELETE:
                 $options[CURLOPT_CUSTOMREQUEST] = 'DELETE';
                 break;
