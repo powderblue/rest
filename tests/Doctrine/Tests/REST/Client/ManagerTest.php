@@ -1,15 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Doctrine\Tests\REST\Client\Manager;
 
-use Doctrine\REST\Client\Manager;
-use Doctrine\REST\Client\Entity;
 use Doctrine\REST\Client\Client;
+use Doctrine\REST\Client\Entity;
 use Doctrine\REST\Client\EntityConfiguration;
-use Doctrine\REST\Client\URLGenerator\StandardURLGenerator;
-use Doctrine\REST\Client\ResponseTransformer\StandardResponseTransformer;
-use Doctrine\REST\Client\ResponseCache;
+use Doctrine\REST\Client\Manager;
 use Doctrine\REST\Client\Request;
+use Doctrine\REST\Client\ResponseCache;
+use Doctrine\REST\Client\ResponseTransformer\StandardResponseTransformer;
+use Doctrine\REST\Client\URLGenerator\StandardURLGenerator;
 use Doctrine\REST\Exception\HttpException;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
@@ -21,12 +23,12 @@ class ManagerTest extends TestCase
         return new $className(sys_get_temp_dir());
     }
 
-    private function createManager($className = 'Doctrine\REST\Client\Manager')
+    private function createManager(): Manager
     {
         $client = new Client();
         $responseCache = $this->createResponseCache();
-        $manager = new $className($client, $responseCache);
-        return $manager;
+
+        return new Manager($client, $responseCache);
     }
 
     protected function setUp(): void
@@ -206,10 +208,11 @@ class ManagerTest extends TestCase
         $manager->registerEntity($entityClassName);
 
         try {
-            $manager->execute($entityClassName, 'http://example.com/entity06s/1', Client::GET);
+            $manager->execute($entityClassName, 'https://jsonplaceholder.typicode.com/posts/0', Client::GET);
         } catch (HttpException $ex) {
             $this->assertSame(404, $ex->getCode());
             $this->assertSame('The HTTP request was unsuccessful', $ex->getMessage());
+
             return;
         }
 

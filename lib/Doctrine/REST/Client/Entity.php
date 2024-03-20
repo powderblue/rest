@@ -112,6 +112,7 @@ abstract class Entity
     public static function generateUrl(array $options = array())
     {
         $configuration = static::getManager()->getEntityConfiguration(get_called_class());
+
         return $configuration->generateUrl($options);
     }
 
@@ -119,7 +120,7 @@ abstract class Entity
     {
         return static::getManager()->execute(
             get_called_class(),
-            self::generateUrl(get_defined_vars()),
+            static::generateUrl(get_defined_vars()),
             Client::GET
         );
     }
@@ -128,7 +129,7 @@ abstract class Entity
     {
         return static::getManager()->execute(
             get_called_class(),
-            self::generateUrl(get_defined_vars()),
+            static::generateUrl(get_defined_vars()),
             Client::GET,
             $parameters
         );
@@ -140,16 +141,18 @@ abstract class Entity
         $exists = $this->exists();
         $method = $exists ? Client::POST : Client::PUT;
         $id = $exists ? $this->getIdentifier() : null;
-        $path = $this->generateUrl(get_defined_vars());
+        $path = static::generateUrl(get_defined_vars());
+
         return static::getManager()->execute($this, $path, $method, $parameters);
     }
 
     public function delete($action = null)
     {
         $id = $this->getIdentifier();
+
         return static::getManager()->execute(
             $this,
-            $this->generateUrl(get_defined_vars()),
+            static::generateUrl(get_defined_vars()),
             Client::DELETE
         );
     }
@@ -157,9 +160,10 @@ abstract class Entity
     public function post($action = null)
     {
         $id = $this->getIdentifier();
+
         return static::getManager()->execute(
             $this,
-            $this->generateUrl(get_defined_vars()),
+            static::generateUrl(get_defined_vars()),
             Client::POST,
             $this->toArray()
         );
@@ -169,7 +173,7 @@ abstract class Entity
     {
         return static::getManager()->execute(
             $this,
-            $this->generateUrl(get_defined_vars()),
+            static::generateUrl(get_defined_vars()),
             Client::GET,
             $this->toArray()
         );
@@ -179,7 +183,7 @@ abstract class Entity
     {
         return static::getManager()->execute(
             $this,
-            $this->generateUrl(get_defined_vars()),
+            static::generateUrl(get_defined_vars()),
             Client::PUT,
             $this->toArray()
         );
@@ -189,7 +193,7 @@ abstract class Entity
     {
         return static::getManager()->execute(
             get_called_class(),
-            self::generateUrl(get_defined_vars()),
+            static::generateUrl(get_defined_vars()),
             $method,
             $parameters
         );
