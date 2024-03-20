@@ -25,8 +25,10 @@ namespace Doctrine\REST\Client;
 use Doctrine\REST\Client\URLGenerator\StandardURLGenerator;
 use Doctrine\REST\Client\ResponseTransformer\StandardResponseTransformer;
 use Doctrine\REST\Client\URLGenerator\AbstractURLGenerator;
-use Doctrine\Common\Inflector\Inflector;
 use Doctrine\Inflector\InflectorFactory;
+
+use const null;
+use const true;
 
 /**
  * Entity configuration class holds all the configuration information for a PHP5
@@ -69,6 +71,7 @@ class EntityConfiguration
         'urlGeneratorImpl' => null,
         'responseTransformerImpl' => null,
         'cacheTtl' => null,
+        'appendSuffix' => null,
     );
 
     /**
@@ -83,15 +86,14 @@ class EntityConfiguration
             throw new \InvalidArgumentException('The entity class name was not specified');
         }
 
-        $defaultAttributeValues = array(
+        $this->setAttributeValues(array_merge([
             'name' => $this->deriveEntityNameFromClassName($effectiveAttributeValues['class']),
             'identifierKey' => 'id',
             'responseType' => 'xml',
             'urlGeneratorImpl' => new StandardURLGenerator($this),
             'responseTransformerImpl' => new StandardResponseTransformer($this),
-        );
-
-        $this->setAttributeValues(array_merge($defaultAttributeValues, $effectiveAttributeValues));
+            'appendSuffix' => true,
+        ], $effectiveAttributeValues));
 
         $this->_reflection = new \ReflectionClass($this->getClass());
 

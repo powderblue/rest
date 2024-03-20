@@ -16,6 +16,10 @@ use Doctrine\REST\Exception\HttpException;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
+use const false;
+use const null;
+use const true;
+
 class ManagerTest extends TestCase
 {
     private function createResponseCache($className = 'Doctrine\REST\Client\ResponseCache')
@@ -85,6 +89,7 @@ class ManagerTest extends TestCase
             'urlGeneratorImpl' => new StandardURLGenerator($configuration),
             'responseTransformerImpl' => new StandardResponseTransformer($configuration),
             'cacheTtl' => null,
+            'appendSuffix' => true,
         ), $configuration->getAttributeValues());
 
         $this->assertSame($manager, $entityClassName::getManager());

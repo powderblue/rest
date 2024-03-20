@@ -1,5 +1,7 @@
 <?php
 
+// phpcs:ignoreFile
+
 namespace Doctrine\REST;
 
 require_once __DIR__ . '/../../vendor/autoload.php';

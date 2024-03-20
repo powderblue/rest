@@ -30,7 +30,6 @@ namespace Doctrine\REST\Client;
  * @since       2.0
  * @version     $Revision$
  * @author      Jonathan H. Wage <jonwage@gmail.com>
- * @todo        Remove identity map?  It appears to add complexity without providing any real benefits.
  */
 class Manager
 {

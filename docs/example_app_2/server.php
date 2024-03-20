@@ -1,5 +1,7 @@
 <?php
 
+// phpcs:ignoreFile
+
 namespace Doctrine\REST;
 
 use Doctrine\ORM as ORM;

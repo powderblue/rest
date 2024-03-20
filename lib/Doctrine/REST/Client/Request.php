@@ -113,7 +113,7 @@ class Request
     }
 
     /**
-     * Returns an ID for this request: the /request/, not the object.
+     * Returns an ID for this request: the *request*, not the object.
      *
      * @return string
      */

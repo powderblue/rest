@@ -5,7 +5,7 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.js"></script>
         <script src="jActiveResource.js"></script>
-        
+
         <script>
         function loadEditForm(id) {
           User.find(id, function(user) {
@@ -33,7 +33,7 @@
               $('#users').append('<li id="user_' + user.id + '">' + user.id + ': ' + user.username + ' <a href="javascript: loadEditForm(' + user.id + ');">Edit</a> | <a href="javascript: UserFactory.destroy(' + user.id + ', function(data) { $(\'#user_\' + ' + user.id + ').remove(); });">Delete</a></li>');
             }
           });
-          
+
           $('#create_user').submit(function(data) {
             var user = User.create();
 
@@ -53,7 +53,7 @@
           });
         });
         </script>
-        
+
     </head>
     <body>
 
@@ -67,7 +67,7 @@
 
     <h2>Users</h2>
     <ul id="users">
-      
+
     </ul>
 
     </body>

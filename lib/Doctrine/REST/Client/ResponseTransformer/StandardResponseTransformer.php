@@ -53,7 +53,7 @@ class StandardResponseTransformer extends AbstractResponseTransformer
         $childElements = $rootElement->children();
 
         if (!$childElements->count()) {
-            return array();  //@todo Change this?
+            return [];
         }
 
         //Does the first child have children (are we looking at a collection)?

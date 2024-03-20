@@ -2,12 +2,18 @@
 
 namespace Doctrine\Tests\REST\Client\EntityConfiguration;
 
+use BadMethodCallException;
 use Doctrine\REST\Client\Entity;
 use Doctrine\REST\Client\EntityConfiguration;
-use Doctrine\REST\Client\URLGenerator\StandardURLGenerator;
 use Doctrine\REST\Client\ResponseTransformer\StandardResponseTransformer;
+use Doctrine\REST\Client\URLGenerator\StandardURLGenerator;
+use InvalidArgumentException;
+use OutOfBoundsException;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
+
+use const null;
+use const true;
 
 class EntityConfigurationTest extends TestCase
 {
@@ -53,6 +59,7 @@ class EntityConfigurationTest extends TestCase
             'urlGeneratorImpl' => new StandardURLGenerator($configuration),
             'responseTransformerImpl' => new StandardResponseTransformer($configuration),
             'cacheTtl' => null,
+            'appendSuffix' => true,
         ), $configuration->getAttributeValues());
     }
 
@@ -64,7 +71,7 @@ class EntityConfigurationTest extends TestCase
             $configuration->setAttributeValues(array(
                 'foo' => 'bar',
             ));
-        } catch (\OutOfBoundsException $ex) {
+        } catch (OutOfBoundsException $ex) {
             return $this->assertEquals('The attribute "foo" does not exist', $ex->getMessage());
         }
 
@@ -99,7 +106,7 @@ class EntityConfigurationTest extends TestCase
 
         try {
             $configuration->poop();
-        } catch (\BadMethodCallException $ex) {
+        } catch (BadMethodCallException $ex) {
             return $this->assertEquals('The method "poop" is not implemented', $ex->getMessage());
         }
 
@@ -112,7 +119,7 @@ class EntityConfigurationTest extends TestCase
 
         try {
             $configuration->getNonExistentAttribute();
-        } catch (\OutOfBoundsException $ex) {
+        } catch (OutOfBoundsException $ex) {
             return $this->assertEquals('The attribute "nonExistentAttribute" does not exist', $ex->getMessage());
         }
 
@@ -138,7 +145,7 @@ class EntityConfigurationTest extends TestCase
     {
         try {
             new EntityConfiguration(array());
-        } catch (\InvalidArgumentException $ex) {
+        } catch (InvalidArgumentException $ex) {
             return $this->assertEquals('The entity class name was not specified', $ex->getMessage());
         }
 
@@ -179,7 +186,7 @@ class EntityConfigurationTest extends TestCase
 
         try {
             $configuration->setCacheTtl(-1);
-        } catch (\InvalidArgumentException $ex) {
+        } catch (InvalidArgumentException $ex) {
             return $this->assertEquals('The TTL is not greater than or equal to zero', $ex->getMessage());
         }
 

@@ -25,8 +25,8 @@ class RequestTest extends TestCase
 
         $originalRequestId = $originalRequest->getRequestId();
 
-        // The strign value here is arbitrary, but ensures nothing's changed in getRequestId()
-        $this->assertEquals('174fe1a03ef906aeaa6c121a74be636d', $originalRequestId);
+        // The string value here is arbitrary, but ensures nothing's changed in getRequestId()
+        $this->assertEquals('af1dbb763f4be2409a4c37d0f6c67d70', $originalRequestId);
 
         $similarResponseTransformer = new StandardResponseTransformer(new EntityConfiguration(__NAMESPACE__ . '\Entity01'));
         $similarRequest = new Request();

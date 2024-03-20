@@ -35,7 +35,7 @@ class ResponseCache
     /**
      * @var string
      */
-    const CACHE_FILE_EXT = '.tmp';
+    public const CACHE_FILE_EXT = '.tmp';
 
     /**
      * @var string

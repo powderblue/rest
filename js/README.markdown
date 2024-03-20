@@ -1,6 +1,6 @@
 # Javascript REST Client
 
-The Javascript REST client is an ActiveRecord style API for working with REST 
+The Javascript REST client is an ActiveRecord style API for working with REST
 services. It is built on top of jQuery and is easy to use.
 
 All you need to do is make sure you require jQuery and jActiveResource:
@@ -20,7 +20,6 @@ Now you can get started by defining new entity:
         return 'username=' + this.username + '&password=' + this.password;
       }
     });
-    
 
 You can start creating instances and saving them:
 
