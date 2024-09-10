@@ -8,7 +8,7 @@
     }],
     "require": {
         "php": ">=5.3",
-        "doctrine/inflector": "1.*"
+        "doctrine/inflector": "^2.0.10"
     },
     "require-dev": {
         "ext-pdo_sqlite": "*",
